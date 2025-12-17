@@ -1,13 +1,36 @@
 import express from 'express';
+import path from 'path';
+import { ENV } from './lib/env.js';
 
 
 
 const app = express();
 
-app.get('/', (req, res) => {
-  res.status(200).json({ msg: 'success from API' });
+const __dirname = path.resolve();
+
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ msg: 'API is up and running' });
 });
 
-app.listen(3000, () => {
-  console.log('success from backend ');
+
+
+app.get('/books', (req, res) => {
+  res.status(200).json({ msg: 'this is the books endpoint' });
 });
+
+
+//Make our app ready for production
+
+if(ENV.NODE_ENV==='production'){
+  app.use(express.static(path.join(__dirname,'../frontend/dist')));
+  
+app.get("/{any}"),(req,res)=>{
+  res.sendFile(path.join(__dirname,'../frontend/dist/index.html'));
+
+}
+}
+
+
+app.listen(ENV.PORT, () => 
+  console.log('server is running on port :', ENV.PORT));

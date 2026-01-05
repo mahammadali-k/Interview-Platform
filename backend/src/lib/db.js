@@ -1,6 +1,7 @@
 import mangoose from 'mongoose';
 import { ENV } from '../lib/env.js';
 
+
 export const connectDB = async () => {
   try {
     if (!ENV.DB_URL) {

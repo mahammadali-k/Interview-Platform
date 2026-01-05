@@ -2,9 +2,12 @@ import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import { serve } from 'inngest/express';
+import { protectRoute } from './middleware/protectRoute.js';
+import {clerkMiddleware} from "@clerk/express";
 import { inngest, functions } from './lib/inngest.js';
 import { ENV } from './lib/env.js';
 import { connectDB } from './lib/db.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 
 
@@ -19,21 +22,26 @@ app.use(express.json());
 // Enable CORS for all routes
 app.use(cors({origin:ENV.CLIENT_URL,credentials:true}));
 
+app.use(clerkMiddleware()); //this adds auth field to req object:req.auth()
+
 // Health check endpoint
 
 
 app.use("/api/inngest", serve({ client: inngest, functions }));
+app.use('/api/chat', chatRoutes);
 
 
 app.get('/health', (req, res) => {
+  
   res.status(200).json({ msg: 'API is up and running' });
 });
 
 
 
-app.get('/books', (req, res) => {
-  res.status(200).json({ msg: 'this is the books endpoint' });
-});
+
+
+
+
 
 
 //Make our app ready for production

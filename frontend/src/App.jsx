@@ -1,4 +1,4 @@
-import './App.css'
+
 import { SignedIn, SignedOut, SignInButton, SignOutButton, UserButton } from '@clerk/clerk-react'
 
 function App() {
@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       
-  <h1>Interview Platform</h1>
+  <h1 className='text-3xl'>Interview Platform</h1>
 
 <SignedOut>
   <SignInButton mode ="modal">

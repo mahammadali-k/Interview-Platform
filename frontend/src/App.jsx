@@ -30,3 +30,7 @@ function App() {
 }
 
 export default App
+
+
+//tw,daisyui,react-router,react-hot-toast,
+//todo:add video call, code editor,problem statements from backend,submission system,admin panel,react-query aka tanstack query,axios

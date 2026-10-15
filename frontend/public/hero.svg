@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" role="img" aria-label="Interview workspace: problem statement, code editor and video call">
+  <rect width="960" height="600" fill="#0e131a"/>
+  <rect x="0.5" y="0.5" width="959" height="599" fill="none" stroke="#263041"/>
+  <!-- title bar -->
+  <rect x="0" y="0" width="960" height="40" fill="#121923"/>
+  <line x1="0" y1="40.5" x2="960" y2="40.5" stroke="#263041"/>
+  <rect x="16" y="12" width="16" height="16" rx="2" fill="#4f7fb5"/>
+  <rect x="42" y="16" width="86" height="8" rx="2" fill="#2c3a4e"/>
+  <rect x="800" y="14" width="64" height="12" rx="2" fill="#1b2533"/>
+  <rect x="876" y="14" width="68" height="12" rx="2" fill="#4f7fb5" opacity=".85"/>
+
+  <!-- problem pane -->
+  <rect x="0" y="41" width="300" height="559" fill="#111822"/>
+  <line x1="300.5" y1="41" x2="300.5" y2="600" stroke="#263041"/>
+  <rect x="24" y="64" width="150" height="14" rx="2" fill="#c9d3e0"/>
+  <rect x="24" y="90" width="56" height="16" rx="2" fill="none" stroke="#4d8f78"/>
+  <rect x="88" y="90" width="92" height="16" rx="2" fill="#1b2533"/>
+  <g fill="#2c3a4e">
+    <rect x="24" y="130" width="252" height="8" rx="2"/>
+    <rect x="24" y="148" width="236" height="8" rx="2"/>
+    <rect x="24" y="166" width="248" height="8" rx="2"/>
+    <rect x="24" y="184" width="170" height="8" rx="2"/>
+  </g>
+  <rect x="24" y="220" width="252" height="92" rx="3" fill="#0e131a" stroke="#263041"/>
+  <rect x="38" y="236" width="70" height="8" rx="2" fill="#4f7fb5"/>
+  <rect x="38" y="256" width="190" height="8" rx="2" fill="#3a475a"/>
+  <rect x="38" y="276" width="70" height="8" rx="2" fill="#5f8a9a"/>
+  <rect x="38" y="296" width="60" height="8" rx="2" fill="#3a475a"/>
+  <g fill="#2c3a4e">
+    <rect x="24" y="340" width="120" height="10" rx="2" fill="#c9d3e0" opacity=".7"/>
+    <rect x="24" y="364" width="200" height="8" rx="2"/>
+    <rect x="24" y="382" width="226" height="8" rx="2"/>
+    <rect x="24" y="400" width="180" height="8" rx="2"/>
+  </g>
+
+  <!-- editor pane -->
+  <rect x="301" y="41" width="364" height="559" fill="#0e131a"/>
+  <rect x="301" y="41" width="364" height="36" fill="#121923"/>
+  <line x1="301" y1="77.5" x2="665" y2="77.5" stroke="#263041"/>
+  <rect x="317" y="52" width="14" height="14" rx="2" fill="#b8962e"/>
+  <rect x="339" y="55" width="76" height="8" rx="2" fill="#2c3a4e"/>
+  <rect x="582" y="50" width="68" height="18" rx="2" fill="#4f7fb5"/>
+  <g font-family="ui-monospace,Menlo,monospace" font-size="12" fill="#3a475a">
+    <text x="317" y="106">1</text><text x="317" y="128">2</text><text x="317" y="150">3</text>
+    <text x="317" y="172">4</text><text x="317" y="194">5</text><text x="317" y="216">6</text>
+    <text x="317" y="238">7</text><text x="317" y="260">8</text><text x="317" y="282">9</text>
+  </g>
+  <g>
+    <rect x="345" y="97" width="46" height="9" rx="2" fill="#7a6aa8"/>
+    <rect x="397" y="97" width="92" height="9" rx="2" fill="#c9d3e0" opacity=".8"/>
+    <rect x="361" y="119" width="40" height="9" rx="2" fill="#7a6aa8"/>
+    <rect x="407" y="119" width="120" height="9" rx="2" fill="#4f7fb5"/>
+    <rect x="377" y="141" width="150" height="9" rx="2" fill="#3a475a"/>
+    <rect x="377" y="163" width="36" height="9" rx="2" fill="#7a6aa8"/>
+    <rect x="419" y="163" width="100" height="9" rx="2" fill="#c9d3e0" opacity=".8"/>
+    <rect x="393" y="185" width="168" height="9" rx="2" fill="#5f8a9a"/>
+    <rect x="393" y="207" width="110" height="9" rx="2" fill="#3a475a"/>
+    <rect x="377" y="229" width="20" height="9" rx="2" fill="#3a475a"/>
+    <rect x="361" y="251" width="20" height="9" rx="2" fill="#3a475a"/>
+    <rect x="361" y="273" width="86" height="9" rx="2" fill="#7a6aa8"/>
+    <rect x="453" y="273" width="62" height="9" rx="2" fill="#4f7fb5"/>
+  </g>
+  <!-- output -->
+  <line x1="301" y1="430.5" x2="665" y2="430.5" stroke="#263041"/>
+  <rect x="301" y="431" width="364" height="30" fill="#121923"/>
+  <rect x="317" y="441" width="52" height="8" rx="2" fill="#2c3a4e"/>
+  <rect x="317" y="480" width="60" height="9" rx="2" fill="#4d8f78"/>
+  <rect x="317" y="502" width="120" height="9" rx="2" fill="#4d8f78" opacity=".7"/>
+
+  <!-- video pane -->
+  <rect x="666" y="41" width="294" height="559" fill="#111822"/>
+  <line x1="665.5" y1="41" x2="665.5" y2="600" stroke="#263041"/>
+  <rect x="682" y="57" width="262" height="168" rx="3" fill="#18212d" stroke="#263041"/>
+  <circle cx="813" cy="124" r="26" fill="#2c3a4e"/>
+  <rect x="790" y="160" width="46" height="34" rx="23" fill="#2c3a4e"/>
+  <rect x="692" y="201" width="64" height="16" rx="2" fill="#0e131a" opacity=".8"/>
+  <rect x="682" y="237" width="262" height="168" rx="3" fill="#18212d" stroke="#263041"/>
+  <circle cx="813" cy="304" r="26" fill="#2c3a4e"/>
+  <rect x="790" y="340" width="46" height="34" rx="23" fill="#2c3a4e"/>
+  <rect x="692" y="381" width="52" height="16" rx="2" fill="#0e131a" opacity=".8"/>
+  <!-- controls -->
+  <g>
+    <rect x="708" y="428" width="34" height="34" rx="3" fill="#1b2533" stroke="#263041"/>
+    <rect x="750" y="428" width="34" height="34" rx="3" fill="#1b2533" stroke="#263041"/>
+    <rect x="792" y="428" width="34" height="34" rx="3" fill="#1b2533" stroke="#263041"/>
+    <rect x="834" y="428" width="34" height="34" rx="3" fill="#1b2533" stroke="#263041"/>
+    <rect x="876" y="428" width="34" height="34" rx="3" fill="#a14b3b"/>
+  </g>
+  <!-- chat -->
+  <rect x="682" y="484" width="262" height="96" rx="3" fill="#0e131a" stroke="#263041"/>
+  <rect x="694" y="498" width="140" height="8" rx="2" fill="#3a475a"/>
+  <rect x="768" y="518" width="164" height="8" rx="2" fill="#4f7fb5" opacity=".7"/>
+  <rect x="694" y="552" width="200" height="14" rx="2" fill="#1b2533"/>
+</svg>

@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Interviewer and candidate collaborating on code">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17233a"/>
+      <stop offset="1" stop-color="#0c1220"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6a9ad0"/>
+      <stop offset="1" stop-color="#3a7a9a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#5b8fc7" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#5b8fc7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <style>
+    .float-a { animation: floatA 6s ease-in-out infinite; }
+    .float-b { animation: floatB 7s ease-in-out infinite; }
+    .float-c { animation: floatA 8s ease-in-out infinite reverse; }
+    .type    { transform-box: fill-box; transform-origin: left center; animation: type 5s steps(12, end) infinite; }
+    .t2 { animation-delay: .4s } .t3 { animation-delay: .8s } .t4 { animation-delay: 1.2s } .t5 { animation-delay: 1.6s }
+    .caret   { animation: blink 1s steps(1) infinite; }
+    .pop     { transform-box: fill-box; transform-origin: center; animation: pop 4s ease-in-out infinite; }
+    .twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+    .tw2 { animation-delay: .5s } .tw3 { animation-delay: 1s }
+    .pulse   { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-out infinite; }
+    @keyframes floatA { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+    @keyframes floatB { 0%,100% { transform: translateY(0) } 50% { transform: translateY(12px) } }
+    @keyframes type { 0% { transform: scaleX(0) } 55%,100% { transform: scaleX(1) } }
+    @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: 0 } }
+    @keyframes pop { 0%,55% { transform: scale(.85); opacity: 0 } 65%,92% { transform: scale(1); opacity: 1 } 100% { transform: scale(.95); opacity: 0 } }
+    @keyframes twinkle { 0%,100% { opacity: .25 } 50% { opacity: 1 } }
+    @keyframes pulse { 0% { transform: scale(.6); opacity: .8 } 100% { transform: scale(1.8); opacity: 0 } }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important } }
+  </style>
+
+  <rect width="640" height="480" rx="28" fill="url(#bg)"/>
+  <circle cx="320" cy="240" r="230" fill="url(#glow)"/>
+
+  <!-- grid -->
+  <g stroke="#ffffff" stroke-opacity=".05">
+    <path d="M0 80h640M0 160h640M0 240h640M0 320h640M0 400h640"/>
+    <path d="M80 0v480M160 0v480M240 0v480M320 0v480M400 0v480M480 0v480M560 0v480"/>
+  </g>
+
+  <!-- code window -->
+  <g class="float-a">
+    <rect x="70" y="110" width="330" height="240" rx="16" fill="#0e1523" stroke="#2a3a55"/>
+    <rect x="70" y="110" width="330" height="34" rx="16" fill="#142036"/>
+    <rect x="70" y="128" width="330" height="16" fill="#142036"/>
+    <circle cx="92" cy="127" r="5" fill="#d8665a"/><circle cx="110" cy="127" r="5" fill="#d9b44a"/><circle cx="128" cy="127" r="5" fill="#4d8f78"/>
+    <g font-family="ui-monospace,Menlo,monospace" font-size="11" fill="#3a475a">
+      <text x="86" y="176">1</text><text x="86" y="200">2</text><text x="86" y="224">3</text><text x="86" y="248">4</text><text x="86" y="272">5</text><text x="86" y="296">6</text>
+    </g>
+    <rect class="type"      x="112" y="168" width="96"  height="10" rx="3" fill="#7a6aa8"/>
+    <rect class="type t2"   x="128" y="192" width="170" height="10" rx="3" fill="#5b8fc7"/>
+    <rect class="type t3"   x="144" y="216" width="120" height="10" rx="3" fill="#c9d3e0" opacity=".8"/>
+    <rect class="type t4"   x="144" y="240" width="190" height="10" rx="3" fill="#5f8a9a"/>
+    <rect class="type t5"   x="128" y="264" width="80"  height="10" rx="3" fill="#7a6aa8"/>
+    <rect class="caret"     x="214" y="262" width="3" height="14" rx="1" fill="#e6edf7"/>
+    <rect x="86" y="312" width="298" height="26" rx="8" fill="#0a1019" stroke="#233350"/>
+    <rect x="98" y="322" width="70" height="7" rx="3" fill="#4d8f78"/>
+  </g>
+
+  <!-- video tiles -->
+  <g class="float-b">
+    <rect x="420" y="96" width="150" height="104" rx="14" fill="#16233a" stroke="#2a3a55"/>
+    <circle cx="495" cy="140" r="20" fill="#2c3f5e"/>
+    <path d="M463 190c4-18 18-26 32-26s28 8 32 26z" fill="#2c3f5e"/>
+    <rect x="430" y="178" width="46" height="14" rx="5" fill="#0a1019" opacity=".85"/>
+    <circle class="pulse" cx="556" cy="110" r="5" fill="#4d8f78"/><circle cx="556" cy="110" r="5" fill="#4d8f78"/>
+
+    <rect x="420" y="214" width="150" height="104" rx="14" fill="#16233a" stroke="#2a3a55"/>
+    <circle cx="495" cy="258" r="20" fill="#3a5a7a"/>
+    <path d="M463 308c4-18 18-26 32-26s28 8 32 26z" fill="#3a5a7a"/>
+    <rect x="430" y="296" width="52" height="14" rx="5" fill="#0a1019" opacity=".85"/>
+  </g>
+
+  <!-- floating result card -->
+  <g class="float-c">
+    <g class="pop">
+      <rect x="360" y="332" width="190" height="64" rx="14" fill="#102a24" stroke="#2f7d5b"/>
+      <circle cx="394" cy="364" r="15" fill="#2f7d5b"/>
+      <path d="M386 364l6 6 12-13" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="420" y="351" width="96" height="9" rx="4" fill="#bfe8d5"/>
+      <rect x="420" y="369" width="62" height="7" rx="3" fill="#6fb08f"/>
+    </g>
+  </g>
+
+  <!-- stars -->
+  <g fill="#e0b13c">
+    <path class="twinkle"      d="M110 70l4 9 10 1-8 6 3 10-9-6-9 6 3-10-8-6 10-1z"/>
+    <path class="twinkle tw2"  d="M158 54l3 7 8 1-6 5 2 8-7-5-7 5 2-8-6-5 8-1z"/>
+    <path class="twinkle tw3"  d="M200 76l3 7 8 1-6 5 2 8-7-5-7 5 2-8-6-5 8-1z"/>
+  </g>
+
+  <!-- brand chip -->
+  <g class="float-b">
+    <rect x="48" y="372" width="120" height="44" rx="12" fill="url(#brand)"/>
+    <text x="108" y="400" text-anchor="middle" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700" font-size="17" fill="#fff">IP · live</text>
+  </g>
+</svg>

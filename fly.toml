@@ -1,23 +1,44 @@
-# fly.toml app configuration file generated for interview-platform on 2026-10-15T12:43:03Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
-app = 'interview-platform'
-primary_region = 'ams'
+# Fly.io configuration. Keep this file in the repository root: "Config path" = fly.toml (the default).
+# Change `app` to a name that is free on Fly (it becomes https://<app>.fly.dev).
+app = "interview-platform"
+primary_region = "ams" # Amsterdam (the region of the app that was already created)
 
 [build]
+  dockerfile = "Dockerfile"
+
+  # public values baked into the frontend at build time
+  [build.args]
+    VITE_API_URL = "/api"
+    VITE_CLERK_PUBLISHABLE_KEY = "pk_test_b3JnYW5pYy1kdWNrLTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    VITE_STREAM_API_KEY = "k8cx57rbuhpc"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+  # must equal the public URL of the app
+  CLIENT_URL = "https://interview-platform.fly.dev"
+  CLERK_PUBLISHABLE_KEY = "pk_test_b3JnYW5pYy1kdWNrLTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+  STREAM_API_KEY = "k8cx57rbuhpc"
+  SMTP_HOST = "smtp.gmail.com"
+  SMTP_PORT = "587"
+  SMTP_USER = "mkerimov892@gmail.com"
+  MAIL_FROM = "IP Interview Platform <mkerimov892@gmail.com>"
 
 [http_service]
-  internal_port = 8080
+  internal_port = 3000
   force_https = true
-  auto_stop_machines = 'stop'
+  auto_stop_machines = "stop"   # stops when idle (saves money); the first request wakes it up
   auto_start_machines = true
   min_machines_running = 0
-  processes = ['app']
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
+  memory = "512mb"
+  cpu_kind = "shared"
   cpus = 1
-  memory_mb = 256

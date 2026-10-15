@@ -225,6 +225,23 @@ is no CORS to configure and the API lives at the same origin (`/api`).
    instance and `pk_live_` / `sk_live_` keys for real users), and in Inngest sync the app with
    `https://<your-service>/api/inngest`.
 
+### Fly.io
+
+`fly.toml` and the `Dockerfile` are in the repository root, so the **Config path** is the default
+(`fly.toml`, or leave it empty).
+
+```bash
+fly launch --no-deploy --copy-config      # keeps fly.toml; pick a free app name and update `app` / CLIENT_URL in it
+fly secrets set \
+  DB_URL="..." CLERK_SECRET_KEY="..." STREAM_API_SECRET="..." \
+  INNGEST_EVENT_KEY="..." INNGEST_SIGNING_KEY="..." SMTP_PASS="..."
+fly deploy
+```
+
+Public values (Clerk publishable key, Stream key, URLs) are already in `fly.toml`; only the secrets
+go through `fly secrets`. After the first deploy, add `https://<app>.fly.dev` to the allowed origins
+in Clerk and sync `https://<app>.fly.dev/api/inngest` in Inngest.
+
 ### Any other Node host
 
 ```bash

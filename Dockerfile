@@ -1,42 +1,36 @@
-# syntax = docker/dockerfile:1
+# One image that serves the API and the built frontend (used by Fly.io; works on any Docker host).
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=22.21.1
-FROM node:${NODE_VERSION}-slim AS base
-
-LABEL fly_launch_runtime="Node.js"
-
-# Node.js app lives here
+# ---- build the frontend ----
+FROM node:20-alpine AS build
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
+COPY frontend/package*.json frontend/
+RUN npm ci --prefix frontend
 
+COPY frontend frontend
 
-# Throw-away build stage to reduce size of final image
-FROM base AS build
+# Vite reads these at build time (they are public values, not secrets)
+ARG VITE_API_URL=/api
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ARG VITE_STREAM_API_KEY
+ENV VITE_API_URL=$VITE_API_URL \
+    VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY \
+    VITE_STREAM_API_KEY=$VITE_STREAM_API_KEY
 
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+RUN npm run build --prefix frontend
 
-# Install node modules
-COPY package.json ./
-RUN npm install
+# ---- runtime ----
+FROM node:20-alpine
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Copy application code
-COPY . .
+COPY backend/package*.json backend/
+RUN npm ci --omit=dev --prefix backend
 
-# Build application
-RUN npm run build
+COPY backend backend
+COPY --from=build /app/frontend/dist frontend/dist
 
-
-# Final stage for app image
-FROM base
-
-# Copy built application
-COPY --from=build /app /app
-
-# Start the server by default, this can be overwritten at runtime
+# server.js resolves ../frontend/dist from the working directory
+WORKDIR /app/backend
 EXPOSE 3000
-CMD [ "npm", "run", "start" ]
+CMD ["node", "src/server.js"]

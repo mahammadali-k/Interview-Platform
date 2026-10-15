@@ -9,7 +9,7 @@ import { sendFeedbackEmail } from "../services/feedbackEmail.js";
 import { loadSession, publicSession, roleOf } from "../services/sessionAccess.js";
 
 // list views never need the answer key, the candidate's answers/code or the host's notes
-const LIST_EXCLUDE = "-quiz -quizAnswers -codeRuns -hostNotes";
+const LIST_EXCLUDE = "-quiz -quizAnswers -codeRuns -hostNotes -incidents";
 
 const isValidTimeLimit = (value) => Number.isInteger(value) && value >= 0 && value <= 180;
 const isValidRating = (value) => Number.isInteger(value) && value >= 1 && value <= 5;
@@ -141,8 +141,11 @@ export async function getSessionById(req, res) {
     const data = session.toObject();
     const role = roleOf(session, req.user);
 
-    // the notes are the host's; people outside the interview only get the public part
-    if (role !== "host") delete data.hostNotes;
+    // the notes and the integrity log are the host's; people outside the interview get the public part
+    if (role !== "host") {
+      delete data.hostNotes;
+      delete data.incidents;
+    }
     if (!role) {
       delete data.codeRuns;
       delete data.quizAnswers;
@@ -202,7 +205,9 @@ export async function updateSession(req, res) {
     });
     if (!session) return;
 
-    const { problem, timeLimitMinutes } = req.body || {};
+    const { problem, timeLimitMinutes, proctoring } = req.body || {};
+
+    if (typeof proctoring === "boolean") session.proctoring = proctoring;
 
     if (timeLimitMinutes !== undefined) {
       if (!isValidTimeLimit(timeLimitMinutes)) {
@@ -264,8 +269,20 @@ export async function removeParticipant(req, res) {
       return res.status(400).json({ message: "There is no candidate to remove" });
     }
 
-    await session.populate("participant", "clerkId");
-    const { _id: participantId, clerkId } = session.participant;
+    await session.populate("participant", "clerkId name");
+    const { _id: participantId, clerkId, name } = session.participant;
+
+    // the browser of the host detected a prohibited device on the candidate's camera
+    const { reason, device, score } = req.body || {};
+
+    if (reason === "prohibited_device") {
+      session.incidents.push({
+        type: reason,
+        device: typeof device === "string" ? device.slice(0, 40) : "device",
+        score: Number.isFinite(score) ? Math.round(score * 100) / 100 : undefined,
+        candidate: name,
+      });
+    }
 
     session.removed.push(participantId);
     session.participant = null;

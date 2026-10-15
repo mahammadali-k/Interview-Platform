@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { setStored } from "./storage";
 
 const STORAGE_KEY = "theme";
 const THEMES = { dark: "executive", light: "executive-light" };
@@ -10,11 +11,7 @@ const getTheme = () =>
 export function setTheme(theme) {
   document.documentElement.dataset.theme = THEMES[theme];
 
-  try {
-    localStorage.setItem(STORAGE_KEY, theme);
-  } catch {
-    // storage unavailable: the theme just won't persist
-  }
+  setStored(STORAGE_KEY, theme);
 
   listeners.forEach((listener) => listener());
 }

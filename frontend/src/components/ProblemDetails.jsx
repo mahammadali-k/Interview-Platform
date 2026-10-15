@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { t } from "../lib/i18n";
 
 function Section({ title, children }) {
@@ -71,4 +72,4 @@ function ProblemDetails({ problem }) {
   );
 }
 
-export default ProblemDetails;
+export default memo(ProblemDetails);

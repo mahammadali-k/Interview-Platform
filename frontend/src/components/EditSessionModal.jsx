@@ -11,16 +11,20 @@ function EditSessionModal({ session, onClose }) {
   const { update, removeCandidate } = useManageSession();
   const [problem, setProblem] = useState(session.problem);
   const [timeLimit, setTimeLimit] = useState(session.timeLimitMinutes || 0);
+  const [proctoring, setProctoring] = useState(session.proctoring ?? true);
   const [confirmingRemoval, setConfirmingRemoval] = useState(false);
 
   const problemChanged = problem !== session.problem;
-  const changed = problemChanged || timeLimit !== (session.timeLimitMinutes || 0);
+  const changed =
+    problemChanged ||
+    timeLimit !== (session.timeLimitMinutes || 0) ||
+    proctoring !== (session.proctoring ?? true);
   const hasProgress = session.quizSubmittedAt || session.codeRuns?.length > 0;
   const busy = update.isPending || removeCandidate.isPending;
 
   const handleSave = () =>
     update.mutate(
-      { id: session._id, ...(problemChanged && { problem }), timeLimitMinutes: timeLimit },
+      { id: session._id, ...(problemChanged && { problem }), timeLimitMinutes: timeLimit, proctoring },
       { onSuccess: onClose }
     );
 
@@ -88,6 +92,21 @@ function EditSessionModal({ session, onClose }) {
             ))}
           </select>
         </div>
+
+        <label className="flex cursor-pointer items-start gap-3 rounded-lg border hairline p-4">
+          <input
+            type="checkbox"
+            className="toggle toggle-primary mt-0.5"
+            checked={proctoring}
+            onChange={(e) => setProctoring(e.target.checked)}
+          />
+          <span>
+            <span className="block font-medium">{t("proctor.setting", "Device detection")}</span>
+            <span className="block text-sm text-base-content/60">
+              {t("proctor.settingHint", "Detects phones and laptops on the candidate's camera and removes the candidate after a warning. Earphones can not be detected automatically: use \"Report device\" in the call. The candidate is told that it is on.")}
+            </span>
+          </span>
+        </label>
 
         {session.participant && (
           <div className="border-t hairline pt-6">

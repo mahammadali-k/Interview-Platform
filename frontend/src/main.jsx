@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
+import { initLang } from "./lib/i18n";
 import { ClerkProvider } from "@clerk/clerk-react";
 import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -39,14 +40,17 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-          <App />
-        </ClerkProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  </StrictMode>
-);
+// the dictionary of a non-English language is a separate chunk: have it ready before the first paint
+initLang().then(() => {
+  createRoot(document.getElementById("root")).render(
+    <StrictMode>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+            <App />
+          </ClerkProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    </StrictMode>
+  );
+});

@@ -1,14 +1,14 @@
-import { requireAuth, clerkClient } from "@clerk/express";
+import { clerkClient } from "@clerk/express";
 import User from "../models/User.js";
 import { upsertStreamUser } from "../lib/stream.js";
 
+// clerkMiddleware (server.js) has already parsed the session; an API must answer 401, not redirect
 export const protectRoute = [
-  requireAuth(),
   async (req, res, next) => {
     try {
-      const clerkId = req.auth().userId;
+      const clerkId = req.auth?.().userId;
 
-      if (!clerkId) return res.status(401).json({ message: "Unauthorized - invalid token" });
+      if (!clerkId) return res.status(401).json({ message: "Unauthorized - please sign in" });
 
       // find user in db by clerk ID
       let user = await User.findOne({ clerkId });

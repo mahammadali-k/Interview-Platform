@@ -59,4 +59,4 @@ export async function loadSession(req, res, { role = "member", status, populate 
 }
 
 // what any signed-in user may see of a session: never the answer key or the host's notes
-export const publicSession = (id) => Session.findById(id).select("-quiz -hostNotes");
+export const publicSession = (id) => Session.findById(id).select("-quiz -hostNotes -incidents");

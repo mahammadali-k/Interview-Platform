@@ -1,6 +1,5 @@
 import { useSyncExternalStore } from "react";
-import az from "../locales/az";
-import ru from "../locales/ru";
+import { getStored, setStored } from "./storage";
 
 /**
  * Tiny i18n layer: English text lives next to the code as the default,
@@ -15,17 +14,18 @@ export const LANGUAGES = [
   { code: "ru", label: "Русский", short: "RU" },
 ];
 
-const DICTIONARIES = { az, ru };
+// dictionaries of the other languages are separate chunks, loaded only when they are needed
+const LOADERS = {
+  az: () => import("../locales/az"),
+  ru: () => import("../locales/ru"),
+};
+const DICTIONARIES = {};
 const STORAGE_KEY = "lang";
 const listeners = new Set();
 
 function detect() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (LANGUAGES.some((l) => l.code === saved)) return saved;
-  } catch {
-    // storage unavailable: fall through to the browser language
-  }
+  const saved = getStored(STORAGE_KEY);
+  if (LANGUAGES.some((l) => l.code === saved)) return saved;
 
   const browser = (navigator.language || "en").slice(0, 2).toLowerCase();
   return LANGUAGES.some((l) => l.code === browser) ? browser : "en";
@@ -34,17 +34,26 @@ function detect() {
 let current = detect();
 document.documentElement.lang = current;
 
-export function setLang(code) {
+async function ensureDictionary(code) {
+  if (code !== "en" && !DICTIONARIES[code]) DICTIONARIES[code] = (await LOADERS[code]()).default;
+}
+
+/** loads the dictionary of the saved language: await it before the first render */
+export const initLang = () => ensureDictionary(current).catch(() => {});
+
+export async function setLang(code) {
   if (!LANGUAGES.some((l) => l.code === code) || code === current) return;
+
+  try {
+    await ensureDictionary(code);
+  } catch {
+    return; // the chunk could not be loaded: stay on the current language
+  }
 
   current = code;
   document.documentElement.lang = code;
 
-  try {
-    localStorage.setItem(STORAGE_KEY, code);
-  } catch {
-    // storage unavailable: the choice just won't persist
-  }
+  setStored(STORAGE_KEY, code);
 
   listeners.forEach((listener) => listener());
 }

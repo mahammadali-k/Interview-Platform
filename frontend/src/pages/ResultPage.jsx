@@ -23,7 +23,8 @@ import { copyText } from "../lib/clipboard";
 import { useEmailReport, useSessionReport, useUpdateResult } from "../hooks/useSessions";
 import { downloadReportPdf } from "../lib/download";
 import { formatDuration } from "../lib/utils";
-import { dateLocale } from "../lib/dateLocale";
+import { formatDateTime, formatTime } from "../lib/format";
+import { getStored, setStored } from "../lib/storage";
 import { t } from "../lib/i18n";
 
 // host-only: change the final decision or the notes after the interview
@@ -99,12 +100,9 @@ function ResultPage() {
     autoDownloaded.current = true;
 
     const key = `report-downloaded:${id}`;
-    try {
-      if (localStorage.getItem(key)) return;
-      localStorage.setItem(key, "1");
-    } catch {
-      // storage unavailable: just download
-    }
+    // without storage the PDF is simply downloaded again on every visit
+    if (getStored(key)) return;
+    setStored(key, "1");
 
     downloadReportPdf(id, report.session.problem).catch(() => toast.error(t("result.pdfFail", "Could not download the PDF")));
   }, [report, id]);
@@ -138,7 +136,7 @@ function ResultPage() {
             <h1 className="text-3xl font-semibold">{session.problem}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-base-content/60">
               <DifficultyBadge difficulty={session.difficulty} />
-              <span>{new Date(session.endedAt).toLocaleString(dateLocale().code)}</span>
+              <span>{formatDateTime(session.endedAt)}</span>
               <span>
                 {session.candidate?.name || t("session.candidate", "Candidate")} · {t("session.interviewerLower", "interviewer")} {session.host?.name}
               </span>
@@ -236,7 +234,7 @@ function ResultPage() {
             value={formatDuration(session.durationSeconds)}
             hint={
               session.joinedAt
-                ? t("result.joined", "Joined {time}", { time: new Date(session.joinedAt).toLocaleTimeString(dateLocale().code) })
+                ? t("result.joined", "Joined {time}", { time: formatTime(session.joinedAt) })
                 : t("result.inRoom", "In the room")
             }
           />
@@ -265,7 +263,7 @@ function ResultPage() {
             {email?.sentAt
               ? t("result.emailedTo", "Feedback emailed to {to} on {date}.", {
                   to: email.to,
-                  date: new Date(email.sentAt).toLocaleString(dateLocale().code),
+                  date: formatDateTime(email.sentAt),
                 })
               : email?.error
                 ? t("result.emailError", "Feedback email was not sent: {error}.", { error: email.error })

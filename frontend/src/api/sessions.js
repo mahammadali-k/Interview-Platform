@@ -14,7 +14,11 @@ export const sessionApi = {
   getSessionById: (id) => get(`/sessions/${id}`),
   updateSession: ({ id, ...body }) => patch(`/sessions/${id}`, body),
   joinSession: (id) => post(`/sessions/${id}/join`),
-  removeParticipant: (id) => post(`/sessions/${id}/remove-participant`),
+  removeParticipant: (arg) => {
+    const { id, ...body } = typeof arg === "string" ? { id: arg } : arg;
+
+    return post(`/sessions/${id}/remove-participant`, body);
+  },
   endSession: ({ id, ...body }) => post(`/sessions/${id}/end`, body),
   saveNotes: ({ id, notes }) => patch(`/sessions/${id}/notes`, { notes }),
   updateResult: ({ id, ...body }) => patch(`/sessions/${id}/result`, body),

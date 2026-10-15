@@ -76,6 +76,8 @@ export function buildReport(session, role) {
     },
     result: session.result,
     email: session.email,
+    // only the host sees integrity incidents (the controller strips them for the candidate)
+    incidents: role === "host" ? session.incidents : [],
     quiz: {
       submitted: summary.quiz.submitted,
       correct: quiz.correct,

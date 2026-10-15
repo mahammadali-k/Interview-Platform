@@ -375,7 +375,13 @@ function SessionPage() {
                           </CenteredMessage>
                         }
                       >
-                        <VideoCallUI chatClient={chatClient} channel={channel} />
+                        <VideoCallUI
+                          chatClient={chatClient}
+                          channel={channel}
+                          sessionId={id}
+                          isHost={isHost}
+                          proctoring={Boolean(session?.proctoring)}
+                        />
                       </Suspense>
                     </StreamCall>
                   </StreamVideo>

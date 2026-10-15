@@ -33,6 +33,22 @@ const sessionSchema = new mongoose.Schema(
     },
     // optional time limit in minutes (0 = none); shown as a countdown, never ends the session
     timeLimitMinutes: { type: Number, default: 0, min: 0, max: 180 },
+    // device detection (phones, laptops...) on the candidate's camera; announced to the candidate
+    proctoring: { type: Boolean, default: true },
+    // integrity incidents, e.g. a prohibited device that got the candidate removed
+    incidents: {
+      type: [
+        {
+          _id: false,
+          type: { type: String, default: "prohibited_device" },
+          device: String,
+          score: Number,
+          at: { type: Date, default: Date.now },
+          candidate: String,
+        },
+      ],
+      default: [],
+    },
     // the interviewer's private notes, saved while the interview runs
     hostNotes: { type: String, default: "", maxlength: 5000 },
     // when the candidate joined / the interview ended (used for time spent)

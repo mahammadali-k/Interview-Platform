@@ -9,6 +9,8 @@ import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
 import ProblemsPage from "./pages/ProblemsPage";
 import HomeHubPage from "./pages/HomeHubPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // heavy pages (Monaco editor, video SDK) are loaded on demand
 const ProblemPage = lazy(() => import("./pages/ProblemPage"));
@@ -35,7 +37,7 @@ function App() {
   const redirectTarget = redirect?.startsWith("/") && !redirect.startsWith("//") ? redirect : null;
 
   return (
-    <>
+    <ErrorBoundary>
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={
@@ -54,11 +56,12 @@ function App() {
           <Route path="/problem/:id" element={protect(<ProblemPage />)} />
           <Route path="/session/:id" element={protect(<SessionPage />)} />
           <Route path="/session/:id/result" element={protect(<ResultPage />)} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
 
       <Toaster toastOptions={{ duration: 3000 }} />
-    </>
+    </ErrorBoundary>
   );
 }
 

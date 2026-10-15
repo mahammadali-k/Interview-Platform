@@ -2,15 +2,20 @@ import {
   CallControls,
   CallingState,
   SpeakerLayout,
+  useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
-import { MessageSquareIcon, UsersIcon, XIcon } from "lucide-react";
+import { FlagIcon, MessageSquareIcon, ScanEyeIcon, ShieldCheckIcon, UsersIcon, XIcon } from "lucide-react";
 import Spinner from "./Spinner";
 import LiveCaptions from "./LiveCaptions";
 import CaptionsControl from "./CaptionsControl";
-import useLiveCaptions from "../hooks/useLiveCaptions";
+import ProctoringOverlay from "./ProctoringOverlay";
+import ProctorAlert from "./ProctorAlert";
+import useProctoring from "../hooks/useProctoring";
 import { getLang, t } from "../lib/i18n";
-import { useState } from "react";
+import { getStored, setStored } from "../lib/storage";
+import { REPORTABLE_DEVICES, deviceLabel } from "../lib/devices";
+import { memo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../lib/theme";
@@ -19,53 +24,36 @@ import { Channel, Chat, MessageInput, MessageList, Thread, Window } from "stream
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "stream-chat-react/dist/css/v2/index.css";
 
-// storage can be blocked (private mode), and the call must keep working without it
-const readSetting = (key) => {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-};
-
-const writeSetting = (key, value) => {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // the choice just won't persist
-  }
-};
-
-function VideoCallUI({ chatClient, channel }) {
+function VideoCallUI({ chatClient, channel, sessionId, isHost = false, proctoring = false }) {
   const navigate = useNavigate();
-  const { useCallCallingState, useParticipantCount, useMicrophoneState } = useCallStateHooks();
+  const { useCallCallingState, useParticipantCount, useMicrophoneState, useRemoteParticipants } =
+    useCallStateHooks();
   const { user } = useUser();
+  const call = useCall();
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
   const { isMute: micMuted } = useMicrophoneState();
+  const remoteParticipants = useRemoteParticipants();
+  const videoAreaRef = useRef(null);
+
+  // device detection: the host's browser watches the candidate's camera
+  const candidateStream = isHost ? remoteParticipants.find((p) => p.videoStream)?.videoStream : undefined;
+  const proctor = useProctoring({ channel, userId: user?.id, isHost, sessionId });
+  const [detectionStatus, setDetectionStatus] = useState("idle");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const theme = useTheme();
 
   // live translation: remembered per browser; the spoken language defaults to the page language
-  const [captionsOn, setCaptionsOn] = useState(() => readSetting("captions") !== "off");
-  const [spokenLang, setSpokenLang] = useState(() => readSetting("spokenLang") || getLang());
-
-  const { lines } = useLiveCaptions({
-    channel,
-    userId: user?.id,
-    enabled: captionsOn,
-    muted: micMuted,
-    spokenLang,
-    targetLang: getLang(),
-  });
+  const [captionsOn, setCaptionsOn] = useState(() => getStored("captions") !== "off");
+  const [spokenLang, setSpokenLang] = useState(() => getStored("spokenLang") || getLang());
 
   const toggleCaptions = () => {
-    writeSetting("captions", captionsOn ? "off" : "on");
+    setStored("captions", captionsOn ? "off" : "on");
     setCaptionsOn(!captionsOn);
   };
 
   const changeSpokenLang = (lang) => {
-    writeSetting("spokenLang", lang);
+    setStored("spokenLang", lang);
     setSpokenLang(lang);
   };
 
@@ -83,14 +71,63 @@ function VideoCallUI({ chatClient, channel }) {
     <div className="str-video relative flex h-full gap-3">
       <div className="flex flex-1 flex-col gap-3">
         <div className="panel flex items-center justify-between gap-2 px-4 py-2.5">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <UsersIcon className="size-4 text-primary" />
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-medium">
+            <span className="flex items-center gap-2">
+              <UsersIcon className="size-4 text-primary" />
             {participantCount === 1
               ? t("video.one", "{n} participant", { n: participantCount })
               : t("video.many", "{n} participants", { n: participantCount })}
+            </span>
+
+            {proctoring && (
+              <span
+                className={`flex items-center gap-1.5 text-xs font-normal ${
+                  detectionStatus === "error" ? "text-warning" : "text-base-content/60"
+                }`}
+                title={t("proctor.notice", "Prohibited devices (phones, laptops) are detected on the candidate's camera. Video is analysed in the browser and is not recorded.")}
+              >
+                {isHost ? <ScanEyeIcon className="size-3.5" /> : <ShieldCheckIcon className="size-3.5" />}
+                {isHost
+                  ? {
+                      idle: t("proctor.idle", "Device detection: waiting for the candidate"),
+                      loading: t("proctor.loading", "Device detection: loading..."),
+                      active: t("proctor.active", "Device detection: active"),
+                      error: t("proctor.error", "Device detection unavailable"),
+                    }[candidateStream ? detectionStatus : "idle"]
+                  : t("proctor.candNotice", "Device detection is on for this interview")}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
+            {isHost && proctoring && (
+              <div className="dropdown dropdown-end">
+                <button
+                  tabIndex={0}
+                  className="btn btn-ghost btn-sm gap-2"
+                  title={t("proctor.reportTitle", "Report a prohibited device you can see")}
+                >
+                  <FlagIcon className="size-4" />
+                  <span className="hidden xl:inline">{t("proctor.report", "Report device")}</span>
+                </button>
+                <ul tabIndex={0} className="dropdown-content panel z-[60] mt-2 w-48 p-1 shadow-xl">
+                  {REPORTABLE_DEVICES.map((device) => (
+                    <li key={device}>
+                      <button
+                        className="w-full rounded-md px-3 py-2 text-left text-sm hover:bg-base-200"
+                        onClick={() => {
+                          proctor.report(device);
+                          document.activeElement?.blur();
+                        }}
+                      >
+                        {deviceLabel(device)}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {hasChat && (
               <CaptionsControl
                 enabled={captionsOn}
@@ -113,9 +150,38 @@ function VideoCallUI({ chatClient, channel }) {
           </div>
         </div>
 
-        <div className="relative flex-1 overflow-hidden rounded-lg border hairline bg-base-300">
+        <div ref={videoAreaRef} className="relative flex-1 overflow-hidden rounded-lg border hairline bg-base-300">
           <SpeakerLayout />
-          <LiveCaptions lines={lines} />
+
+          {/* stays mounted during the countdown so the red box keeps following the device */}
+          {isHost && proctoring && candidateStream && (
+            <ProctoringOverlay
+              stream={candidateStream}
+              containerRef={videoAreaRef}
+              onStatus={setDetectionStatus}
+              onViolation={proctor.handleViolation}
+            />
+          )}
+
+          <LiveCaptions
+            channel={channel}
+            call={call}
+            userId={user?.id}
+            enabled={captionsOn}
+            muted={micMuted}
+            spokenLang={spokenLang}
+            targetLang={getLang()}
+          />
+
+          {proctor.alert && (
+            <ProctorAlert
+              device={proctor.alert.device}
+              deadline={proctor.alert.deadline}
+              isHost={isHost}
+              onCancel={proctor.cancel}
+              onRemoveNow={proctor.removeNow}
+            />
+          )}
         </div>
 
         <div className="panel flex justify-center p-3">
@@ -160,4 +226,5 @@ function VideoCallUI({ chatClient, channel }) {
   );
 }
 
-export default VideoCallUI;
+// memoised: typing in the editor or the notes re-renders the session page, but never the call UI
+export default memo(VideoCallUI);

@@ -1,6 +1,7 @@
 import { ClockIcon, Code2Icon, TrophyIcon, UsersIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { dateLocale } from "../lib/dateLocale";
+import { formatDate } from "../lib/format";
 import { t } from "../lib/i18n";
 import { Link } from "react-router";
 import DifficultyBadge from "./DifficultyBadge";
@@ -43,7 +44,7 @@ function RecentCard({ session, index }) {
       <div className="flex items-center justify-between border-t hairline pt-3">
         <span className="eyebrow">{isActive ? t("dash.inProgress", "In progress") : t("dash.viewFeedback", "View feedback")}</span>
         <span className="text-xs text-base-content/40">
-          {new Date(session.updatedAt).toLocaleDateString()}
+          {formatDate(session.updatedAt)}
         </span>
       </div>
     </Link>

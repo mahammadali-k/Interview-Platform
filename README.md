@@ -11,6 +11,7 @@
 
 - **1-on-1 interview rooms** with video, screen sharing, mic/camera controls and recording
 - **Real-time chat** inside every session
+- **Device detection**: the host's browser (in a Web Worker, so the call never freezes) looks for phones and laptops on the candidate's camera, marks them with a red box that follows the device, warns both sides and removes the candidate after a short countdown. Nothing is uploaded or recorded. Earphones can not be detected by the model, so the host has a *Report device* button. The host can cancel a false alarm or switch the feature off, and the candidate is always told it is on
 - **Live translation of speech** in the video call: each person's speech is transcribed in their browser and shown to the other side as subtitles translated into the page language (English, Azerbaijani, Russian)
 - **Code editor** powered by Monaco (the VS Code editor) with JavaScript, Python and Java
 - **Server-side code execution** in a remote sandbox (Judge0 or Piston). The server judges the output, so a result cannot be faked from the browser
@@ -199,10 +200,39 @@ All routes require a Clerk session and live under `/api`.
 
 ## Deployment
 
-The root `build` and `start` scripts target single-service hosting (for example Render or
-Railway): the build installs both packages and builds the frontend, and in
-production the Express server serves `frontend/dist`. Set `NODE_ENV=production` and the
-environment variables above on the host.
+The app deploys as **one web service**: the Express server also serves the built frontend, so there
+is no CORS to configure and the API lives at the same origin (`/api`).
+
+### Render (Blueprint)
+
+1. Push the repository to GitHub.
+2. In Render: **New + > Blueprint**, pick this repository. [`render.yaml`](render.yaml) describes the service.
+3. Fill in the variables marked as secrets (they are never stored in git):
+
+   | Variable | Value |
+   | --- | --- |
+   | `CLIENT_URL` | the public URL of the service, e.g. `https://interview-platform.onrender.com` |
+   | `DB_URL` | MongoDB Atlas connection string (allow `0.0.0.0/0` in Network Access) |
+   | `CLERK_PUBLISHABLE_KEY`, `VITE_CLERK_PUBLISHABLE_KEY` | same Clerk publishable key |
+   | `CLERK_SECRET_KEY` | Clerk secret key |
+   | `STREAM_API_KEY`, `VITE_STREAM_API_KEY` | same Stream key |
+   | `STREAM_API_SECRET` | Stream secret |
+   | `INNGEST_EVENT_KEY`, `INNGEST_SIGNING_KEY` | Inngest keys |
+   | `SMTP_*`, `MAIL_FROM` | optional, for feedback emails |
+
+   `VITE_*` variables are baked into the frontend **at build time**, so changing one needs a new deploy.
+4. After the first deploy, in Clerk add the service URL to the allowed origins (use a *Production*
+   instance and `pk_live_` / `sk_live_` keys for real users), and in Inngest sync the app with
+   `https://<your-service>/api/inngest`.
+
+### Any other Node host
+
+```bash
+npm run build   # installs both packages and builds the frontend
+npm start       # NODE_ENV=production serves frontend/dist and the API on $PORT
+```
+
+Health check: `GET /health`.
 
 ## Author
 

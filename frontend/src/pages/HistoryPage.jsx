@@ -21,7 +21,7 @@ import EmptyState from "../components/EmptyState";
 import { useHistory } from "../hooks/useSessions";
 import { formatDuration } from "../lib/utils";
 import { downloadCsv } from "../lib/csv";
-import { dateLocale } from "../lib/dateLocale";
+import { formatPattern } from "../lib/format";
 import { t } from "../lib/i18n";
 
 const PAGE_SIZE = 10;
@@ -74,7 +74,7 @@ function weeklyBuckets(interviews) {
     });
 
     return {
-      label: format(start, "d MMM", { locale: dateLocale() }),
+      label: formatPattern(start, "d MMM"),
       accepted: inWeek.filter((item) => item.verdict === "accepted").length,
       rejected: inWeek.filter((item) => item.verdict !== "accepted").length,
     };
@@ -281,8 +281,8 @@ function HistoryPage() {
                 {rows.map((item) => (
                   <tr key={item.id} className="hover:bg-base-200">
                     <td className="whitespace-nowrap text-sm">
-                      {format(new Date(item.endedAt), "d MMM yyyy", { locale: dateLocale() })}
-                      <div className="text-xs text-base-content/50">{format(new Date(item.endedAt), "HH:mm")}</div>
+                      {formatPattern(item.endedAt, "d MMM yyyy")}
+                      <div className="text-xs text-base-content/50">{formatPattern(item.endedAt, "HH:mm")}</div>
                     </td>
                     <td>
                       <div className="font-medium">

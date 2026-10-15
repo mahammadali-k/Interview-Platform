@@ -12,6 +12,7 @@ import ProblemDescription from "../components/ProblemDescription";
 import OutputPanel from "../components/OutputPanel";
 import CodeEditorPanel from "../components/CodeEditorPanel";
 import ResizeHandle from "../components/ResizeHandle";
+import { t } from "../lib/i18n";
 
 const DEFAULT_PROBLEM_ID = "two-sum";
 const ALL_PROBLEMS = Object.values(PROBLEMS);
@@ -41,15 +42,15 @@ function ProblemPage() {
     const result = await run(selectedLanguage, code, { problem: currentProblem.title });
 
     if (!result.success) {
-      toast.error("Code execution failed!");
+      toast.error(t("run.failed", "Code execution failed!"));
       return;
     }
 
     if (result.passed) {
       triggerConfetti();
-      toast.success("All tests passed! Great job!");
+      toast.success(t("run.passedGreat", "All tests passed! Great job!"));
     } else {
-      toast.error("Tests failed. Check your output!");
+      toast.error(t("run.testsFailedCheck", "Tests failed. Check your output!"));
     }
   };
 

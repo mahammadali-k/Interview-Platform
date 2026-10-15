@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { HourglassIcon, TimerIcon } from "lucide-react";
+import { t } from "../lib/i18n";
 
 const pad = (n) => String(n).padStart(2, "0");
 
@@ -23,7 +24,7 @@ function ElapsedTimer({ since, limitMinutes = 0 }) {
 
   if (!limitMinutes) {
     return (
-      <span className="flex items-center gap-1.5 font-mono text-sm tabular-nums" title="Elapsed time">
+      <span className="flex items-center gap-1.5 font-mono text-sm tabular-nums" title={t("timer.elapsed", "Elapsed time")}>
         <TimerIcon className="size-4 text-base-content/50" />
         {format(elapsed)}
       </span>
@@ -38,10 +39,12 @@ function ElapsedTimer({ since, limitMinutes = 0 }) {
   return (
     <span
       className={`flex items-center gap-1.5 font-mono text-sm tabular-nums ${tone}`}
-      title={`Time limit: ${limitMinutes} minutes`}
+      title={t("timer.limit", "Time limit: {n} minutes", { n: limitMinutes })}
     >
       <HourglassIcon className="size-4" />
-      {over ? `+${format(-remaining)} over` : `${format(remaining)} left`}
+      {over
+        ? t("timer.over", "+{time} over", { time: format(-remaining) })
+        : t("timer.left", "{time} left", { time: format(remaining) })}
     </span>
   );
 }

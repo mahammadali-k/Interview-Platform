@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import { PROBLEM_LIST } from "../data/problems";
 import { TIME_LIMITS } from "../lib/constants";
 import { useManageSession } from "../hooks/useSessions";
+import { t } from "../lib/i18n";
 
 // host-only: change the problem or time limit of a running interview, or remove the candidate
 function EditSessionModal({ session, onClose }) {
@@ -25,18 +26,18 @@ function EditSessionModal({ session, onClose }) {
 
   return (
     <Modal
-      eyebrow="Manage live session"
-      title="Edit session"
+      eyebrow={t("edit.eyebrow", "Manage live session")}
+      title={t("session.edit", "Edit session")}
       onClose={onClose}
       busy={busy}
       footer={
         <>
           <button className="btn btn-ghost" onClick={onClose}>
-            Close
+            {t("common.close", "Close")}
           </button>
           <button className="btn btn-primary gap-2" disabled={!changed || busy} onClick={handleSave}>
             {update.isPending && <Loader2Icon className="size-4 animate-spin" />}
-            Save changes
+            {t("edit.save", "Save changes")}
           </button>
         </>
       }
@@ -44,7 +45,7 @@ function EditSessionModal({ session, onClose }) {
       <div className="space-y-6">
         <div>
           <label className="eyebrow mb-2 block" htmlFor="edit-problem">
-            Problem
+            {t("edit.problem", "Problem")}
           </label>
           <select
             id="edit-problem"
@@ -63,8 +64,8 @@ function EditSessionModal({ session, onClose }) {
             <p className="mt-3 flex gap-2 rounded-lg border border-warning/40 bg-warning/10 p-3 text-sm">
               <AlertTriangleIcon className="mt-0.5 size-4 shrink-0 text-warning" />
               <span>
-                Switching the problem loads its questions and clears the candidate&apos;s quiz answers and
-                code runs{hasProgress ? " (they already have progress)" : ""}.
+                {t("edit.warn", "Switching the problem loads its questions and clears the candidate's quiz answers and code runs.")}
+                {hasProgress ? ` ${t("edit.warnProgress", "(they already have progress)")}` : ""}
               </span>
             </p>
           )}
@@ -72,7 +73,7 @@ function EditSessionModal({ session, onClose }) {
 
         <div>
           <label className="eyebrow mb-2 block" htmlFor="edit-time-limit">
-            Time limit
+            {t("create.limit", "Time limit")}
           </label>
           <select
             id="edit-time-limit"
@@ -82,7 +83,7 @@ function EditSessionModal({ session, onClose }) {
           >
             {TIME_LIMITS.map((minutes) => (
               <option key={minutes} value={minutes}>
-                {minutes ? `${minutes} minutes` : "No limit"}
+                {minutes ? t("create.minutes", "{n} minutes", { n: minutes }) : t("create.noLimit", "No limit")}
               </option>
             ))}
           </select>
@@ -90,10 +91,9 @@ function EditSessionModal({ session, onClose }) {
 
         {session.participant && (
           <div className="border-t hairline pt-6">
-            <p className="eyebrow mb-2">Candidate</p>
+            <p className="eyebrow mb-2">{t("session.candidate", "Candidate")}</p>
             <p className="mb-3 text-sm text-base-content/70">
-              {session.participant.name} is in this interview. Removing them frees the seat and blocks them
-              from rejoining.
+              {t("edit.removeText", "{name} is in this interview. Removing them frees the seat and blocks them from rejoining.", { name: session.participant.name })}
             </p>
 
             {confirmingRemoval ? (
@@ -104,10 +104,10 @@ function EditSessionModal({ session, onClose }) {
                   disabled={busy}
                 >
                   {removeCandidate.isPending && <Loader2Icon className="size-4 animate-spin" />}
-                  Yes, remove
+                  {t("edit.yesRemove", "Yes, remove")}
                 </button>
                 <button className="btn btn-ghost btn-sm" onClick={() => setConfirmingRemoval(false)}>
-                  Keep
+                  {t("edit.keep", "Keep")}
                 </button>
               </div>
             ) : (
@@ -116,7 +116,7 @@ function EditSessionModal({ session, onClose }) {
                 onClick={() => setConfirmingRemoval(true)}
               >
                 <UserMinusIcon className="size-4" />
-                Remove candidate
+                {t("edit.remove", "Remove candidate")}
               </button>
             )}
           </div>

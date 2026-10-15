@@ -3,6 +3,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Navigate, Route, Routes, useLocation } from "react-router";
 import { Toaster } from "react-hot-toast";
 import Spinner from "./components/Spinner";
+import { useLang } from "./lib/i18n";
 
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
@@ -19,6 +20,7 @@ const QuestionsPage = lazy(() => import("./pages/QuestionsPage"));
 const PageLoader = () => <Spinner fullScreen />;
 
 function App() {
+  useLang(); // re-render everything below when the language changes
   const { isSignedIn, isLoaded } = useUser();
   const { pathname, search } = useLocation();
 

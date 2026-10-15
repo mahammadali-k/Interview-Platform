@@ -21,6 +21,8 @@ import EmptyState from "../components/EmptyState";
 import { useHistory } from "../hooks/useSessions";
 import { formatDuration } from "../lib/utils";
 import { downloadCsv } from "../lib/csv";
+import { dateLocale } from "../lib/dateLocale";
+import { t } from "../lib/i18n";
 
 const PAGE_SIZE = 10;
 const WEEKS_SHOWN = 8;
@@ -40,7 +42,7 @@ function VerdictBadge({ verdict }) {
 
   return (
     <span className={`badge badge-outline badge-sm ${verdict === "accepted" ? "badge-success" : "badge-error"}`}>
-      {verdict === "accepted" ? "Accepted" : "Not accepted"}
+      {verdict === "accepted" ? t("result.accepted", "Accepted") : t("result.notAccepted", "Not accepted")}
     </span>
   );
 }
@@ -72,7 +74,7 @@ function weeklyBuckets(interviews) {
     });
 
     return {
-      label: format(start, "d MMM"),
+      label: format(start, "d MMM", { locale: dateLocale() }),
       accepted: inWeek.filter((item) => item.verdict === "accepted").length,
       rejected: inWeek.filter((item) => item.verdict !== "accepted").length,
     };
@@ -162,51 +164,51 @@ function HistoryPage() {
 
       <main className="mx-auto max-w-7xl px-4 py-10">
         <PageHeader
-          eyebrow="Records"
-          title="Interview history"
-          description="Time spent, correct and incorrect answers and the outcome of every interview."
+          eyebrow={t("hist.eyebrow", "Records")}
+          title={t("palette.history", "Interview history")}
+          description={t("hist.desc", "Time spent, correct and incorrect answers and the outcome of every interview.")}
           actions={
             <button className="btn btn-outline gap-2" onClick={handleExport} disabled={!filtered.length}>
               <DownloadIcon className="size-4" />
-              Export CSV
+              {t("hist.export", "Export CSV")}
             </button>
           }
         />
 
         <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
-          <StatTile label="Interviews" value={filtered.length} />
+          <StatTile label={t("hub.stat.interviews", "Interviews")} value={filtered.length} />
           <StatTile
-            label="Accepted"
+            label={t("hub.stat.accepted", "Accepted")}
             value={filtered.length ? `${Math.round((accepted / filtered.length) * 100)}%` : "-"}
-            hint={`${accepted} of ${filtered.length}`}
+            hint={t("hist.ofTotal", "{a} of {b}", { a: accepted, b: filtered.length })}
             tone="success"
           />
           <StatTile
-            label="Avg time spent"
+            label={t("hist.avgTime", "Avg time spent")}
             value={filtered.length ? formatDuration(average(filtered.map((i) => i.durationSeconds))) : "-"}
           />
           <StatTile
-            label="Avg quiz score"
+            label={t("hist.avgQuiz", "Avg quiz score")}
             value={withQuiz.length ? `${average(withQuiz.map((i) => i.quiz.percent))}%` : "-"}
-            hint={`${withQuiz.length} submitted`}
+            hint={t("hist.nSubmitted", "{n} submitted", { n: withQuiz.length })}
           />
           <StatTile
-            label="Avg rating"
+            label={t("hist.avgRating", "Avg rating")}
             value={averageRating ? `${averageRating} / 5` : "-"}
-            hint={`${rated.length} rated`}
+            hint={t("hist.nRated", "{n} rated", { n: rated.length })}
           />
         </div>
 
         {/* ACTIVITY */}
         <section className="panel mb-6 p-5">
           <div className="mb-4 flex items-center justify-between">
-            <p className="eyebrow">Interviews per week</p>
+            <p className="eyebrow">{t("hist.perWeek", "Interviews per week")}</p>
             <span className="flex items-center gap-4 text-xs text-base-content/60">
               <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-sm bg-success/80" /> Accepted
+                <span className="size-2 rounded-sm bg-success/80" /> {t("hub.stat.accepted", "Accepted")}
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="size-2 rounded-sm bg-error/70" /> Not accepted
+                <span className="size-2 rounded-sm bg-error/70" /> {t("result.notAccepted", "Not accepted")}
               </span>
             </span>
           </div>
@@ -219,7 +221,7 @@ function HistoryPage() {
             <SearchIcon className="size-4 text-base-content/50" />
             <input
               type="search"
-              placeholder="Search candidate, interviewer or problem"
+              placeholder={t("hist.search", "Search candidate, interviewer or problem")}
               value={query}
               onChange={(e) => withReset(setQuery)(e.target.value)}
             />
@@ -230,9 +232,9 @@ function HistoryPage() {
             value={role}
             onChange={(e) => withReset(setRole)(e.target.value)}
           >
-            <option value="all">All roles</option>
-            <option value="host">As interviewer</option>
-            <option value="participant">As candidate</option>
+            <option value="all">{t("hist.allRoles", "All roles")}</option>
+            <option value="host">{t("hist.asHost", "As interviewer")}</option>
+            <option value="participant">{t("hist.asCand", "As candidate")}</option>
           </select>
 
           <select
@@ -240,9 +242,9 @@ function HistoryPage() {
             value={verdict}
             onChange={(e) => withReset(setVerdict)(e.target.value)}
           >
-            <option value="all">Any result</option>
-            <option value="accepted">Accepted</option>
-            <option value="rejected">Not accepted</option>
+            <option value="all">{t("hist.anyResult", "Any result")}</option>
+            <option value="accepted">{t("result.accepted", "Accepted")}</option>
+            <option value="rejected">{t("result.notAccepted", "Not accepted")}</option>
           </select>
         </div>
 
@@ -257,21 +259,21 @@ function HistoryPage() {
           ) : filtered.length === 0 ? (
             <EmptyState
               icon={HistoryIcon}
-              title="No interviews found"
-              hint={interviews.length ? "Try different filters." : "Finished interviews will appear here."}
+              title={t("hist.none", "No interviews found")}
+              hint={interviews.length ? t("hist.tryFilters", "Try different filters.") : t("hist.willAppear", "Finished interviews will appear here.")}
             />
           ) : (
             <table className="table">
               <thead>
                 <tr className="eyebrow">
-                  <SortableTh label="Date" field="date" sort={sort} onSort={handleSort} />
-                  <th>Candidate</th>
-                  <th>Problem</th>
-                  <SortableTh label="Time spent" field="time" sort={sort} onSort={handleSort} />
-                  <SortableTh label="Quiz" field="quiz" sort={sort} onSort={handleSort} />
-                  <th>Code</th>
-                  <SortableTh label="Rating" field="rating" sort={sort} onSort={handleSort} />
-                  <th>Result</th>
+                  <SortableTh label={t("hist.col.date", "Date")} field="date" sort={sort} onSort={handleSort} />
+                  <th>{t("session.candidate", "Candidate")}</th>
+                  <th>{t("edit.problem", "Problem")}</th>
+                  <SortableTh label={t("result.time", "Time spent")} field="time" sort={sort} onSort={handleSort} />
+                  <SortableTh label={t("tab.quiz", "Quiz")} field="quiz" sort={sort} onSort={handleSort} />
+                  <th>{t("hist.col.code", "Code")}</th>
+                  <SortableTh label={t("rating.label", "Rating")} field="rating" sort={sort} onSort={handleSort} />
+                  <th>{t("result.sumResult", "Result")}</th>
                   <th />
                 </tr>
               </thead>
@@ -279,15 +281,15 @@ function HistoryPage() {
                 {rows.map((item) => (
                   <tr key={item.id} className="hover:bg-base-200">
                     <td className="whitespace-nowrap text-sm">
-                      {format(new Date(item.endedAt), "d MMM yyyy")}
+                      {format(new Date(item.endedAt), "d MMM yyyy", { locale: dateLocale() })}
                       <div className="text-xs text-base-content/50">{format(new Date(item.endedAt), "HH:mm")}</div>
                     </td>
                     <td>
                       <div className="font-medium">
-                        {item.role === "host" ? item.candidate?.name || "No candidate" : item.host?.name}
+                        {item.role === "host" ? item.candidate?.name || t("hist.noCandidate", "No candidate") : item.host?.name}
                       </div>
                       <div className="text-xs text-base-content/50">
-                        {item.role === "host" ? item.candidate?.email : "You were the candidate"}
+                        {item.role === "host" ? item.candidate?.email : t("hist.youWereCandidate", "You were the candidate")}
                       </div>
                     </td>
                     <td>
@@ -305,15 +307,15 @@ function HistoryPage() {
                           <span className="text-base-content/50">{item.quiz.unanswered}–</span>
                         </>
                       ) : (
-                        <span className="text-base-content/40">not submitted</span>
+                        <span className="text-base-content/40">{t("hist.notSubmitted", "not submitted")}</span>
                       )}
                     </td>
                     <td className="whitespace-nowrap text-sm">
                       <span className={item.code.testsPassed ? "text-success" : "text-error"}>
-                        {item.code.testsPassed ? "Passed" : "Not passed"}
+                        {item.code.testsPassed ? t("result.passed", "Passed") : t("result.notPassed", "Not passed")}
                       </span>
                       <div className="text-xs text-base-content/50">
-                        {item.code.runs} run{item.code.runs === 1 ? "" : "s"}
+                        {t("hist.runs", "{n} runs", { n: item.code.runs })}
                       </div>
                     </td>
                     <td className="whitespace-nowrap text-sm">
@@ -331,7 +333,7 @@ function HistoryPage() {
                     </td>
                     <td>
                       <Link to={`/session/${item.id}/result`} className="btn btn-ghost btn-sm gap-1">
-                        Details
+                        {t("hist.details", "Details")}
                         <ChevronRightIcon className="size-4" />
                       </Link>
                     </td>
@@ -346,15 +348,15 @@ function HistoryPage() {
         {filtered.length > PAGE_SIZE && (
           <div className="mt-4 flex items-center justify-between text-sm text-base-content/60">
             <span>
-              {currentPage * PAGE_SIZE + 1}–{Math.min((currentPage + 1) * PAGE_SIZE, filtered.length)} of{" "}
-              {filtered.length}
+              {currentPage * PAGE_SIZE + 1}–{Math.min((currentPage + 1) * PAGE_SIZE, filtered.length)}{" "}
+              {t("hist.of", "of")} {filtered.length}
             </span>
             <div className="flex items-center gap-1">
               <button
                 className="btn btn-ghost btn-sm btn-square"
                 disabled={currentPage === 0}
                 onClick={() => setPage(currentPage - 1)}
-                aria-label="Previous page"
+                aria-label={t("hist.prev", "Previous page")}
               >
                 <ChevronLeftIcon className="size-4" />
               </button>
@@ -365,7 +367,7 @@ function HistoryPage() {
                 className="btn btn-ghost btn-sm btn-square"
                 disabled={currentPage >= pageCount - 1}
                 onClick={() => setPage(currentPage + 1)}
-                aria-label="Next page"
+                aria-label={t("hist.next", "Next page")}
               >
                 <ChevronRightIcon className="size-4" />
               </button>
@@ -373,7 +375,9 @@ function HistoryPage() {
           </div>
         )}
 
-        <p className="mt-3 text-xs text-base-content/50">Quiz column: correct ✓ · incorrect ✗ · unanswered –</p>
+        <p className="mt-3 text-xs text-base-content/50">
+          {t("hist.legend", "Quiz column: correct ✓ · incorrect ✗ · unanswered –")}
+        </p>
       </main>
     </div>
   );

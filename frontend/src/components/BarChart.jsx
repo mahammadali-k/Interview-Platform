@@ -1,9 +1,11 @@
 // stacked bars without a chart library: one column per bucket, `accepted` on top of `rejected`
+import { t } from "../lib/i18n";
+
 function BarChart({ data, height = 120 }) {
   const max = Math.max(1, ...data.map((d) => d.accepted + d.rejected));
 
   return (
-    <div className="flex items-end gap-2" style={{ height }} role="img" aria-label="Interviews per week">
+    <div className="flex items-end gap-2" style={{ height }} role="img" aria-label={t("hist.perWeek", "Interviews per week")}>
       {data.map((bucket) => {
         const total = bucket.accepted + bucket.rejected;
         const column = (total / max) * 100;
@@ -12,7 +14,7 @@ function BarChart({ data, height = 120 }) {
           <div
             key={bucket.label}
             className="group flex h-full flex-1 flex-col items-center justify-end gap-1"
-            title={`${bucket.label}: ${total} interview${total === 1 ? "" : "s"} (${bucket.accepted} accepted)`}
+            title={t("chart.tip", "{label}: {n} ({a} accepted)", { label: bucket.label, n: total, a: bucket.accepted })}
           >
             <span className="font-mono text-[0.65rem] text-base-content/50 opacity-0 transition-opacity group-hover:opacity-100">
               {total}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Loader2Icon, PlusIcon, Trash2Icon } from "lucide-react";
 import Modal from "./Modal";
 import { OPTION_LETTERS as LETTERS } from "../lib/constants";
+import { t } from "../lib/i18n";
 
 const MIN_OPTIONS = 2;
 const MAX_OPTIONS = 6;
@@ -69,7 +70,7 @@ function QuestionEditorModal({
 
   return (
     <Modal
-      eyebrow="Quiz question"
+      eyebrow={t("q.eyebrow", "Quiz question")}
       title={title}
       size="max-w-2xl"
       onSubmit={handleSubmit}
@@ -78,11 +79,11 @@ function QuestionEditorModal({
       footer={
         <>
           <button type="button" className="btn btn-ghost" onClick={onClose} disabled={isSaving}>
-            Cancel
+            {t("common.cancel", "Cancel")}
           </button>
           <button type="submit" className="btn btn-primary gap-2" disabled={!isValid || isSaving}>
             {isSaving && <Loader2Icon className="size-4 animate-spin" />}
-            Save question
+            {t("q.save", "Save question")}
           </button>
         </>
       }
@@ -91,7 +92,7 @@ function QuestionEditorModal({
         {problemOptions && (
           <div>
             <label className="eyebrow mb-2 block" htmlFor="question-problem">
-              Problem
+              {t("edit.problem", "Problem")}
             </label>
             <select
               id="question-problem"
@@ -110,20 +111,20 @@ function QuestionEditorModal({
 
         <div>
           <label className="eyebrow mb-2 block" htmlFor="question-text">
-            Question
-          </label>
+              {t("q.question", "Question")}
+            </label>
           <textarea
             id="question-text"
             className="textarea textarea-bordered h-24 w-full"
             maxLength={500}
-            placeholder="What is the time complexity of ...?"
+            placeholder={t("q.placeholder", "What is the time complexity of ...?")}
             value={form.question}
             onChange={(e) => setField("question", e.target.value)}
           />
         </div>
 
         <div>
-          <p className="eyebrow mb-2">Options (select the correct one)</p>
+          <p className="eyebrow mb-2">{t("q.options", "Options (select the correct one)")}</p>
           <div className="space-y-2">
             {form.options.map((option, idx) => (
               <div key={idx} className="flex items-center gap-2">
@@ -133,13 +134,13 @@ function QuestionEditorModal({
                   className="radio radio-primary radio-sm"
                   checked={form.answer === idx}
                   onChange={() => setField("answer", idx)}
-                  aria-label={`Option ${LETTERS[idx]} is correct`}
+                  aria-label={t("q.correctAria", "Option {l} is correct", { l: LETTERS[idx] })}
                 />
                 <span className="w-5 font-mono text-sm text-base-content/50">{LETTERS[idx]}</span>
                 <input
                   className="input input-bordered w-full"
                   maxLength={200}
-                  placeholder={`Option ${LETTERS[idx]}`}
+                  placeholder={t("q.optionPlaceholder", "Option {l}", { l: LETTERS[idx] })}
                   value={option}
                   onChange={(e) => setOption(idx, e.target.value)}
                 />
@@ -148,7 +149,7 @@ function QuestionEditorModal({
                   className="btn btn-ghost btn-sm btn-square"
                   disabled={form.options.length <= MIN_OPTIONS}
                   onClick={() => removeOption(idx)}
-                  aria-label={`Remove option ${LETTERS[idx]}`}
+                  aria-label={t("q.removeOption", "Remove option {l}", { l: LETTERS[idx] })}
                 >
                   <Trash2Icon className="size-4" />
                 </button>
@@ -159,15 +160,15 @@ function QuestionEditorModal({
           {form.options.length < MAX_OPTIONS && (
             <button type="button" className="btn btn-ghost btn-sm mt-2 gap-2" onClick={addOption}>
               <PlusIcon className="size-4" />
-              Add option
+              {t("q.addOption", "Add option")}
             </button>
           )}
         </div>
 
         <div>
           <label className="eyebrow mb-2 block" htmlFor="question-explanation">
-            Explanation (shown in the candidate&apos;s feedback)
-          </label>
+              {t("q.explanation", "Explanation (shown in the candidate's feedback)")}
+            </label>
           <textarea
             id="question-explanation"
             className="textarea textarea-bordered h-20 w-full"
@@ -185,7 +186,7 @@ function QuestionEditorModal({
               checked={saveToBank}
               onChange={(e) => setSaveToBank(e.target.checked)}
             />
-            Also save to my question bank for future interviews
+            {t("q.saveBank", "Also save to my question bank for future interviews")}
           </label>
         )}
       </div>

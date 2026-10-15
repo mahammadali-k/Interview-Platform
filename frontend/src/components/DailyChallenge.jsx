@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { CalendarDaysIcon, Loader2Icon, SparklesIcon, UsersIcon } from "lucide-react";
 import DifficultyBadge from "./DifficultyBadge";
 import useStartInterview from "../hooks/useStartInterview";
+import { t } from "../lib/i18n";
 import { PROBLEM_LIST } from "../data/problems";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -20,7 +21,7 @@ function DailyChallenge() {
       <div className="relative mb-4 flex items-center justify-between">
         <p className="eyebrow flex items-center gap-2">
           <CalendarDaysIcon className="size-4" />
-          Problem of the day
+          {t("daily.title", "Problem of the day")}
         </p>
         <SparklesIcon className="size-4 text-warning" />
       </div>
@@ -34,11 +35,11 @@ function DailyChallenge() {
 
       <div className="relative mt-5 flex flex-wrap gap-2">
         <Link to={`/problem/${problem.id}`} className="btn btn-primary btn-sm">
-          Solve now
+          {t("daily.solve", "Solve now")}
         </Link>
         <button className="btn btn-outline btn-sm gap-2" disabled={isStarting} onClick={() => start(problem)}>
           {isStarting ? <Loader2Icon className="size-4 animate-spin" /> : <UsersIcon className="size-4" />}
-          Interview with it
+          {t("daily.interview", "Interview with it")}
         </button>
       </div>
     </section>

@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { addDays, format, startOfDay, startOfWeek, subWeeks } from "date-fns";
+import { dateLocale } from "../lib/dateLocale";
+import { t } from "../lib/i18n";
 
 const WEEKS = 17;
 const SHADES = [
@@ -30,7 +32,7 @@ function ActivityHeatmap({ dates }) {
         const count = counts.get(key) || 0;
 
         if (day <= today) sum += count;
-        return { key, label: format(day, "d MMM yyyy"), count, future: day > today };
+        return { key, label: format(day, "d MMM yyyy", { locale: dateLocale() }), count, future: day > today };
       })
     );
 
@@ -39,13 +41,13 @@ function ActivityHeatmap({ dates }) {
 
   return (
     <div>
-      <div className="flex gap-1 overflow-x-auto pb-1" role="img" aria-label={`${total} interviews in the last ${WEEKS} weeks`}>
+      <div className="flex gap-1 overflow-x-auto pb-1" role="img" aria-label={t("heat.summary", "{n} interviews in the last {weeks} weeks", { n: total, weeks: WEEKS })}>
         {weeks.map((week, w) => (
           <div key={w} className="flex flex-col gap-1">
             {week.map((day, d) => (
               <div
                 key={day.key}
-                title={`${day.label}: ${day.count} interview${day.count === 1 ? "" : "s"}`}
+                title={t("heat.day", "{date}: {n}", { date: day.label, n: day.count })}
                 style={{ animationDelay: `${(w * 7 + d) * 4}ms` }}
                 className={`animate-pop size-3.5 rounded-[4px] ${
                   day.future ? "opacity-0" : SHADES[Math.min(day.count, SHADES.length - 1)]
@@ -58,14 +60,14 @@ function ActivityHeatmap({ dates }) {
 
       <div className="mt-3 flex items-center justify-between text-xs text-base-content/50">
         <span>
-          {total} interview{total === 1 ? "" : "s"} in the last {WEEKS} weeks
+          {t("heat.summary", "{n} interviews in the last {weeks} weeks", { n: total, weeks: WEEKS })}
         </span>
         <span className="flex items-center gap-1">
-          Less
+          {t("heat.less", "Less")}
           {SHADES.map((shade) => (
             <span key={shade} className={`size-3 rounded-[3px] ${shade}`} />
           ))}
-          More
+          {t("heat.more", "More")}
         </span>
       </div>
     </div>

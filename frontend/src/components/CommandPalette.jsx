@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PROBLEM_LIST } from "../data/problems";
 import { setTheme, useTheme } from "../lib/theme";
+import { getLang, t } from "../lib/i18n";
 
 // Ctrl/Cmd + K: jump anywhere without touching the mouse
 function CommandPalette({ open, onClose }) {
@@ -23,30 +24,33 @@ function CommandPalette({ open, onClose }) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
 
+  // `t` reads the current language, which is why the language is a dependency here
+  const lang = getLang();
   const commands = useMemo(
     () => [
-      { id: "new", label: "Create a session", hint: "Dashboard", icon: PlusIcon, run: () => navigate("/dashboard?new=1") },
-      { id: "home", label: "Home", hint: "Page", icon: HouseIcon, run: () => navigate("/") },
-      { id: "dashboard", label: "Dashboard", hint: "Page", icon: LayoutDashboardIcon, run: () => navigate("/dashboard") },
-      { id: "history", label: "Interview history", hint: "Page", icon: HistoryIcon, run: () => navigate("/history") },
-      { id: "questions", label: "Question bank", hint: "Page", icon: ListChecksIcon, run: () => navigate("/questions") },
-      { id: "problems", label: "Practice problems", hint: "Page", icon: BookOpenIcon, run: () => navigate("/problems") },
+      { id: "new", label: t("palette.create", "Create a session"), hint: t("nav.dashboard", "Dashboard"), icon: PlusIcon, run: () => navigate("/dashboard?new=1") },
+      { id: "home", label: t("nav.home", "Home"), hint: t("palette.page", "Page"), icon: HouseIcon, run: () => navigate("/") },
+      { id: "dashboard", label: t("nav.dashboard", "Dashboard"), hint: t("palette.page", "Page"), icon: LayoutDashboardIcon, run: () => navigate("/dashboard") },
+      { id: "history", label: t("palette.history", "Interview history"), hint: t("palette.page", "Page"), icon: HistoryIcon, run: () => navigate("/history") },
+      { id: "questions", label: t("palette.questions", "Question bank"), hint: t("palette.page", "Page"), icon: ListChecksIcon, run: () => navigate("/questions") },
+      { id: "problems", label: t("palette.problems", "Practice problems"), hint: t("palette.page", "Page"), icon: BookOpenIcon, run: () => navigate("/problems") },
       {
         id: "theme",
-        label: theme === "dark" ? "Switch to light theme" : "Switch to dark theme",
-        hint: "Appearance",
+        label: theme === "dark" ? t("theme.toLight", "Switch to light theme") : t("theme.toDark", "Switch to dark theme"),
+        hint: t("palette.appearance", "Appearance"),
         icon: theme === "dark" ? SunIcon : MoonIcon,
         run: () => setTheme(theme === "dark" ? "light" : "dark"),
       },
       ...PROBLEM_LIST.map((problem) => ({
         id: `problem-${problem.id}`,
         label: problem.title,
-        hint: `Problem · ${problem.difficulty}`,
+        hint: t("palette.problem", "Problem · {difficulty}", { difficulty: t(`difficulty.${problem.difficulty.toLowerCase()}`, problem.difficulty) }),
         icon: BookOpenIcon,
         run: () => navigate(`/problem/${problem.id}`),
       })),
     ],
-    [navigate, theme]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [navigate, theme, lang]
   );
 
   const results = useMemo(() => {
@@ -85,7 +89,7 @@ function CommandPalette({ open, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-[15vh]" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-[15vh]" role="dialog" aria-modal="true" aria-label={t("palette.title", "Command palette")}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       <div className="panel animate-pop relative w-full max-w-xl overflow-hidden shadow-2xl">
@@ -94,7 +98,7 @@ function CommandPalette({ open, onClose }) {
           <input
             ref={inputRef}
             className="h-12 flex-1 bg-transparent outline-none placeholder:text-base-content/40"
-            placeholder="Search pages, problems and actions..."
+            placeholder={t("palette.placeholder", "Search pages, problems and actions...")}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -107,7 +111,9 @@ function CommandPalette({ open, onClose }) {
 
         <ul className="max-h-80 overflow-y-auto p-2" role="listbox">
           {results.length === 0 && (
-            <li className="px-3 py-6 text-center text-sm text-base-content/50">Nothing matches &quot;{query}&quot;</li>
+            <li className="px-3 py-6 text-center text-sm text-base-content/50">
+              {t("palette.empty", "Nothing matches \"{query}\"", { query })}
+            </li>
           )}
 
           {results.map((command, idx) => (

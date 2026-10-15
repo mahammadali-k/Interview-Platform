@@ -23,6 +23,7 @@
 - **Room locking**: a session accepts only two participants
 - **Authentication** with Clerk
 - **Background jobs** with Inngest (user sync between Clerk, MongoDB and Stream)
+- Interface in **English, Azerbaijani and Russian** (switch in the navbar, remembered per browser)
 - Modern UI with dark and light themes, a command palette (Ctrl/Cmd + K), subtle motion that respects `prefers-reduced-motion`, and a lightweight, code-split bundle
 - Time limits with a countdown, private host notes that autosave to the server, ratings, CSV export and a weekly activity chart
 
@@ -195,13 +196,11 @@ All routes require a Clerk session and live under `/api`.
 
 ## Deployment
 
-The root `build` and `start` scripts target single-service hosting (for example Sevalla,
-Render or Railway): the build installs both packages and builds the frontend, and in
+The root `build` and `start` scripts target single-service hosting (for example Render or
+Railway): the build installs both packages and builds the frontend, and in
 production the Express server serves `frontend/dist`. Set `NODE_ENV=production` and the
 environment variables above on the host.
 
 ## Author
 
 **Mahammadali**: [github.com/mahammadali-k](https://github.com/mahammadali-k)
-
-

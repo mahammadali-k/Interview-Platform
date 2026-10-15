@@ -20,7 +20,6 @@ import useCodeRunner from "../hooks/useCodeRunner";
 import useSharedCode from "../hooks/useSharedCode";
 import useStarterCode from "../hooks/useStarterCode";
 import useHostNotes from "../hooks/useHostNotes";
-import { PASS_PERCENT } from "../lib/constants";
 import Navbar from "../components/Navbar";
 import DifficultyBadge from "../components/DifficultyBadge";
 import ProblemDetails from "../components/ProblemDetails";
@@ -28,7 +27,7 @@ import CodeEditorPanel from "../components/CodeEditorPanel";
 import OutputPanel from "../components/OutputPanel";
 import ResizeHandle from "../components/ResizeHandle";
 import QuizPanel from "../components/QuizPanel";
-import EndSessionModal from "../components/EndSessionModal";
+import EndSessionDialog from "../components/EndSessionDialog";
 import EditSessionModal from "../components/EditSessionModal";
 import FinishInterviewModal from "../components/FinishInterviewModal";
 import QuestionEditorModal from "../components/QuestionEditorModal";
@@ -38,6 +37,7 @@ import Spinner from "../components/Spinner";
 import IconTile from "../components/IconTile";
 import ElapsedTimer from "../components/ElapsedTimer";
 import CopyInviteButton from "../components/CopyInviteButton";
+import { t } from "../lib/i18n";
 
 // the video SDK and chat are the heaviest part of the page: load them after the first paint
 const VideoCallUI = lazy(() => import("../components/VideoCallUI"));
@@ -140,8 +140,8 @@ function SessionPage() {
   const handleRunCode = async () => {
     const result = await run(selectedLanguage, code, { sessionId: id });
 
-    if (!result.success) toast.error(result.error ? "Code execution failed!" : "Code did not run");
-    else toast[result.passed ? "success" : "error"](result.passed ? "All tests passed!" : "Tests failed.");
+    if (!result.success) toast.error(result.error ? t("run.failed", "Code execution failed!") : t("run.notRun", "Code did not run"));
+    else toast[result.passed ? "success" : "error"](result.passed ? t("run.passed", "All tests passed!") : t("run.testsFailed", "Tests failed."));
   };
 
   // ---- quiz ----
@@ -155,7 +155,7 @@ function SessionPage() {
   const handleSubmitQuiz = () =>
     submitQuizMutation.mutate(
       { id, answers: draft },
-      { onSuccess: () => toast.success("Answers submitted!") }
+      { onSuccess: () => toast.success(t("quiz.submitted", "Answers submitted!")) }
     );
 
   // candidate: send whatever is answered, then end the interview
@@ -175,33 +175,6 @@ function SessionPage() {
     );
   };
 
-  // host: what they see before making the final call
-  const quizCorrect = questions.filter((q) => q.selected !== null && q.selected === q.answer).length;
-  const quizPercent = questions.length ? Math.round((quizCorrect / questions.length) * 100) : 0;
-  const testsPassed = session?.codeRuns?.some((r) => r.passed) ?? false;
-  const quizPassed = quizSubmitted && quizPercent >= PASS_PERCENT;
-
-  const endSummary = {
-    testsPassed,
-    quizSubmitted,
-    quizCorrect,
-    quizTotal: questions.length,
-    quizPassed,
-    suggested: testsPassed && quizPassed ? "accepted" : "rejected",
-  };
-
-  const handleEndSession = ({ decision, notes, rating }) => {
-    endSessionMutation.mutate(
-      { id, decision, notes, rating },
-      {
-        onSuccess: () => {
-          setModal(null);
-          navigate(`/session/${id}/result`, { replace: true });
-        },
-      }
-    );
-  };
-
   // ---- host edits the interview's questions ----
 
   const handleSaveQuestion = (values) => {
@@ -215,7 +188,7 @@ function SessionPage() {
   };
 
   const handleDeleteQuestion = (question) => {
-    if (confirm("Remove this question from the interview?")) {
+    if (confirm(t("quiz.removeConfirm", "Remove this question from the interview?"))) {
       questionMutations.remove.mutate({ id, questionId: question.id });
     }
   };
@@ -228,12 +201,12 @@ function SessionPage() {
         <CenteredMessage>
           <div className="panel max-w-md p-8 text-center">
             <IconTile icon={UserXIcon} tone="error" size="lg" className="mx-auto mb-4" />
-            <h2 className="text-xl font-semibold">You can&apos;t join this session</h2>
+            <h2 className="text-xl font-semibold">{t("session.cantJoin", "You can't join this session")}</h2>
             <p className="mt-1 text-base-content/70">
-              {joinError?.response?.data?.message || "The session is not available."}
+              {joinError?.response?.data?.message || t("session.unavailable", "The session is not available.")}
             </p>
             <Link to="/dashboard" className="btn btn-primary mt-6">
-              Back to dashboard
+              {t("common.backDashboard", "Back to dashboard")}
             </Link>
           </div>
         </CenteredMessage>
@@ -256,7 +229,7 @@ function SessionPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
                         {problemData?.category && <p className="eyebrow mb-2">{problemData.category}</p>}
-                        <h1 className="text-2xl font-semibold">{session?.problem || "Loading..."}</h1>
+                        <h1 className="text-2xl font-semibold">{session?.problem || t("common.loadingDots", "Loading...")}</h1>
                       </div>
 
                       <div className="flex shrink-0 flex-wrap items-center justify-end gap-3">
@@ -281,11 +254,11 @@ function SessionPage() {
                             )}
                             <button className="btn btn-outline btn-sm gap-2" onClick={() => setModal("edit")}>
                               <SettingsIcon className="size-4" />
-                              Edit session
+                              {t("session.edit", "Edit session")}
                             </button>
                             <button className="btn btn-error btn-sm gap-2" onClick={() => setModal("end")}>
                               <LogOutIcon className="size-4" />
-                              End Interview
+                              {t("session.end", "End Interview")}
                             </button>
                           </>
                         )}
@@ -293,7 +266,7 @@ function SessionPage() {
                         {isParticipant && (
                           <button className="btn btn-primary btn-sm gap-2" onClick={() => setModal("finish")}>
                             <LogOutIcon className="size-4" />
-                            Submit &amp; finish
+                            {t("finish.submit", "Submit & finish")}
                           </button>
                         )}
                       </div>
@@ -302,9 +275,9 @@ function SessionPage() {
 
                   <div role="tablist" className="flex border-b hairline bg-base-100 px-5">
                     {[
-                      { key: "problem", label: "Problem" },
-                      { key: "quiz", label: "Quiz" },
-                      ...(isHost ? [{ key: "notes", label: "My notes" }] : []),
+                      { key: "problem", label: t("tab.problem", "Problem") },
+                      { key: "quiz", label: t("tab.quiz", "Quiz") },
+                      ...(isHost ? [{ key: "notes", label: t("tab.notes", "My notes") }] : []),
                     ].map(({ key, label }) => (
                       <button
                         key={key}
@@ -381,14 +354,14 @@ function SessionPage() {
             <div className="h-full overflow-auto bg-base-200 p-4">
               {isInitializingCall ? (
                 <CenteredMessage>
-                  <Spinner size="size-10" label="Connecting to video call..." />
+                  <Spinner size="size-10" label={t("video.connecting", "Connecting to video call...")} />
                 </CenteredMessage>
               ) : !streamClient || !call ? (
                 <CenteredMessage>
                   <div className="panel max-w-md p-8 text-center">
                     <IconTile icon={PhoneOffIcon} tone="error" size="lg" className="mx-auto mb-4" />
-                    <h2 className="text-xl font-semibold">Connection Failed</h2>
-                    <p className="mt-1 text-base-content/70">Unable to connect to the video call</p>
+                    <h2 className="text-xl font-semibold">{t("video.failed", "Connection Failed")}</h2>
+                    <p className="mt-1 text-base-content/70">{t("video.failedText", "Unable to connect to the video call")}</p>
                   </div>
                 </CenteredMessage>
               ) : (
@@ -413,14 +386,8 @@ function SessionPage() {
         </PanelGroup>
       </div>
 
-      {modal === "end" && (
-        <EndSessionModal
-          onClose={() => setModal(null)}
-          onConfirm={handleEndSession}
-          isEnding={endSessionMutation.isPending}
-          summary={endSummary}
-          initialNotes={hostNotes.notes}
-        />
+      {modal === "end" && session && (
+        <EndSessionDialog session={session} initialNotes={hostNotes.notes} onClose={() => setModal(null)} />
       )}
 
       {modal === "finish" && (
@@ -440,7 +407,7 @@ function SessionPage() {
         <QuestionEditorModal
           // remount per question so the form starts from that question's values
           key={editingQuestion?.id ?? "new"}
-          title={editingQuestion ? "Edit question" : "Add question"}
+          title={editingQuestion ? t("q.edit", "Edit question") : t("q.add", "Add question")}
           initial={editingQuestion}
           offerSaveToBank={!editingQuestion}
           isSaving={questionMutations.add.isPending || questionMutations.update.isPending}

@@ -6,6 +6,7 @@ import {
 } from "@stream-io/video-react-sdk";
 import { MessageSquareIcon, UsersIcon, XIcon } from "lucide-react";
 import Spinner from "./Spinner";
+import { t } from "../lib/i18n";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useTheme } from "../lib/theme";
@@ -25,7 +26,7 @@ function VideoCallUI({ chatClient, channel }) {
   if (callingState === CallingState.JOINING) {
     return (
       <div className="flex h-full items-center justify-center">
-        <Spinner size="size-10" label="Joining call..." />
+        <Spinner size="size-10" label={t("video.joining", "Joining call...")} />
       </div>
     );
   }
@@ -38,17 +39,19 @@ function VideoCallUI({ chatClient, channel }) {
         <div className="panel flex items-center justify-between gap-2 px-4 py-2.5">
           <div className="flex items-center gap-2 text-sm font-medium">
             <UsersIcon className="size-4 text-primary" />
-            {participantCount} {participantCount === 1 ? "participant" : "participants"}
+            {participantCount === 1
+              ? t("video.one", "{n} participant", { n: participantCount })
+              : t("video.many", "{n} participants", { n: participantCount })}
           </div>
 
           {hasChat && (
             <button
               onClick={() => setIsChatOpen((open) => !open)}
               className={`btn btn-sm gap-2 ${isChatOpen ? "btn-primary" : "btn-ghost"}`}
-              title={isChatOpen ? "Hide chat" : "Show chat"}
+              title={isChatOpen ? t("video.hideChat", "Hide chat") : t("video.showChat", "Show chat")}
             >
               <MessageSquareIcon className="size-4" />
-              Chat
+              {t("video.chat", "Chat")}
             </button>
           )}
         </div>
@@ -71,11 +74,11 @@ function VideoCallUI({ chatClient, channel }) {
           {isChatOpen && (
             <>
               <div className="flex items-center justify-between border-b hairline bg-base-300 p-3">
-                <h3 className="eyebrow">Session Chat</h3>
+                <h3 className="eyebrow">{t("video.sessionChat", "Session Chat")}</h3>
                 <button
                   onClick={() => setIsChatOpen(false)}
                   className="text-base-content/60 transition-colors hover:text-base-content"
-                  title="Close chat"
+                  title={t("video.closeChat", "Close chat")}
                 >
                   <XIcon className="size-5" />
                 </button>

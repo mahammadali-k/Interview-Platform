@@ -1,11 +1,12 @@
-import { ArrowRightIcon, Code2Icon, CrownIcon, RadioIcon, SettingsIcon, UserIcon } from "lucide-react";
+import { ArrowRightIcon, Code2Icon, CrownIcon, PowerIcon, RadioIcon, SettingsIcon, UserIcon } from "lucide-react";
 import { Link } from "react-router";
 import DifficultyBadge from "./DifficultyBadge";
 import EmptyState from "./EmptyState";
 import CopyInviteButton from "./CopyInviteButton";
 import IconTile from "./IconTile";
+import { t } from "../lib/i18n";
 
-function SessionRow({ session, isUserInSession, isHostOf, onEdit, index }) {
+function SessionRow({ session, isUserInSession, isHostOf, onEdit, onEnd, index }) {
   const isMember = isUserInSession(session);
   const isHost = isHostOf(session);
   const isFull = session.participant && !isMember;
@@ -31,10 +32,10 @@ function SessionRow({ session, isUserInSession, isHostOf, onEdit, index }) {
             </span>
             <span className="flex items-center gap-1.5">
               <UserIcon className="size-4" />
-              {session.participant ? session.participant.name : "Waiting for candidate"}
+              {session.participant ? session.participant.name : t("session.waiting", "Waiting for candidate")}
             </span>
             <span className={`badge badge-sm badge-outline ${isFull ? "badge-error" : "badge-success"}`}>
-              {isFull ? "FULL" : "OPEN"}
+              {isFull ? t("dash.full", "FULL") : t("dash.open", "OPEN")}
             </span>
           </div>
         </div>
@@ -43,10 +44,21 @@ function SessionRow({ session, isUserInSession, isHostOf, onEdit, index }) {
       <div className="flex shrink-0 items-center gap-2">
         {isHost && (
           <button
+            className="btn btn-ghost btn-sm gap-1.5 text-error hover:bg-error/10"
+            onClick={() => onEnd(session)}
+            title={t("dash.endTitle", "End session")}
+          >
+            <PowerIcon className="size-4" />
+            {t("dash.end", "End")}
+          </button>
+        )}
+
+        {isHost && (
+          <button
             className="btn btn-ghost btn-sm btn-square"
             onClick={() => onEdit(session)}
-            aria-label="Edit session"
-            title="Edit session"
+            aria-label={t("session.edit", "Edit session")}
+            title={t("session.edit", "Edit session")}
           >
             <SettingsIcon className="size-4" />
           </button>
@@ -57,10 +69,10 @@ function SessionRow({ session, isUserInSession, isHostOf, onEdit, index }) {
         )}
 
         {isFull ? (
-          <button className="btn btn-disabled btn-sm">Full</button>
+          <button className="btn btn-disabled btn-sm">{t("dash.fullBtn", "Full")}</button>
         ) : (
           <Link to={`/session/${session._id}`} className="btn btn-primary btn-sm gap-2">
-            {isMember ? "Rejoin" : "Join"}
+            {isMember ? t("dash.rejoin", "Rejoin") : t("join.button", "Join")}
             <ArrowRightIcon className="size-4" />
           </Link>
         )}
@@ -69,17 +81,17 @@ function SessionRow({ session, isUserInSession, isHostOf, onEdit, index }) {
   );
 }
 
-function ActiveSessions({ sessions, isLoading, isUserInSession, isHostOf, onEdit }) {
+function ActiveSessions({ sessions, isLoading, isUserInSession, isHostOf, onEdit, onEnd }) {
   return (
     <section className="panel animate-rise stagger h-full p-6 lg:col-span-2" style={{ "--i": 1 }}>
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Live Sessions</h2>
+        <h2 className="text-lg font-semibold">{t("dash.live", "Live Sessions")}</h2>
         <span className="flex items-center gap-2 text-sm text-success">
           <span className="relative flex size-2">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-60" />
             <span className="relative inline-flex size-2 rounded-full bg-success" />
           </span>
-          {sessions.length} active
+          {t("dash.nActive", "{n} active", { n: sessions.length })}
         </span>
       </div>
 
@@ -94,11 +106,16 @@ function ActiveSessions({ sessions, isLoading, isUserInSession, isHostOf, onEdit
               isUserInSession={isUserInSession}
               isHostOf={isHostOf}
               onEdit={onEdit}
+              onEnd={onEnd}
               index={idx}
             />
           ))
         ) : (
-          <EmptyState icon={RadioIcon} title="No active sessions" hint="Be the first to create one." />
+          <EmptyState
+            icon={RadioIcon}
+            title={t("dash.noActive", "No active sessions")}
+            hint={t("dash.noActiveHint", "Be the first to create one.")}
+          />
         )}
       </div>
     </section>

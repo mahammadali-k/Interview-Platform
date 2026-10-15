@@ -22,24 +22,30 @@ import ActivityHeatmap from "../components/ActivityHeatmap";
 import TipCarousel from "../components/TipCarousel";
 import { useActiveSessions, useHistory } from "../hooks/useSessions";
 import { formatDuration } from "../lib/utils";
+import { t } from "../lib/i18n";
 
-const PHRASES = [
-  "run technical interviews.",
-  "review every answer.",
-  "send feedback in one click.",
-  "build your question bank.",
+const getPhrases = () => [
+  t("hub.p1", "run technical interviews."),
+  t("hub.p2", "review every answer."),
+  t("hub.p3", "send feedback in one click."),
+  t("hub.p4", "build your question bank."),
 ];
 
-const SHORTCUTS = [
-  { to: "/dashboard?new=1", label: "New interview", text: "Pick a problem and invite a candidate", icon: PlusIcon },
-  { to: "/questions", label: "Question bank", text: "Write and edit your own quiz questions", icon: ListChecksIcon },
-  { to: "/history", label: "History", text: "Results, time spent and mistakes", icon: HistoryIcon },
-  { to: "/problems", label: "Practice", text: "Solve problems on your own", icon: BookOpenIcon },
+const getShortcuts = () => [
+  { to: "/dashboard?new=1", label: t("hub.sc1.label", "New interview"), text: t("hub.sc1.text", "Pick a problem and invite a candidate"), icon: PlusIcon },
+  { to: "/questions", label: t("hub.sc2.label", "Question bank"), text: t("hub.sc2.text", "Write and edit your own quiz questions"), icon: ListChecksIcon },
+  { to: "/history", label: t("hub.sc3.label", "History"), text: t("hub.sc3.text", "Results, time spent and mistakes"), icon: HistoryIcon },
+  { to: "/problems", label: t("hub.sc4.label", "Practice"), text: t("hub.sc4.text", "Solve problems on your own"), icon: BookOpenIcon },
 ];
 
 const greeting = () => {
   const hour = new Date().getHours();
-  return hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+  return hour < 12
+    ? t("greet.morning", "Good morning")
+    : hour < 18
+      ? t("greet.afternoon", "Good afternoon")
+      : t("greet.evening", "Good evening");
 };
 
 // the signed-in landing page: greeting, live numbers, a daily problem and an activity calendar
@@ -62,24 +68,24 @@ function HomeHubPage() {
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-14 lg:grid-cols-2">
           <div className="space-y-6">
-            <p className="eyebrow animate-rise">Home</p>
+            <p className="eyebrow animate-rise">{t("nav.home", "Home")}</p>
 
             <h1 className="animate-rise stagger text-4xl font-semibold leading-tight tracking-tight lg:text-5xl" style={{ "--i": 1 }}>
               {greeting()}, <span className="text-gradient">{user?.firstName || "there"}</span>
             </h1>
 
             <p className="animate-rise stagger min-h-8 text-xl text-base-content/70" style={{ "--i": 2 }}>
-              Let&apos;s <Typewriter phrases={PHRASES} />
+              {t("hub.lets", "Let's")} <Typewriter phrases={getPhrases()} />
             </p>
 
             <div className="animate-rise stagger flex flex-wrap gap-3" style={{ "--i": 3 }}>
               <Link to="/dashboard?new=1" className="btn btn-primary gap-2 shadow-lg shadow-primary/30">
                 <PlusIcon className="size-4" />
-                Create session
+                {t("hub.create", "Create session")}
               </Link>
               <Link to="/dashboard" className="btn btn-ghost gap-2">
                 <RadioIcon className="size-4" />
-                Live sessions
+                {t("hub.live", "Live sessions")}
               </Link>
             </div>
 
@@ -92,7 +98,7 @@ function HomeHubPage() {
             <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-gradient-to-tr from-primary/30 via-transparent to-accent/30 blur-2xl" />
             <img
               src="/home-illustration.svg"
-              alt="An interviewer and a candidate working on code together"
+              alt={t("hub.heroAlt", "An interviewer and a candidate working on code together")}
               width="640"
               height="480"
               fetchPriority="high"
@@ -105,16 +111,20 @@ function HomeHubPage() {
       <main className="mx-auto max-w-7xl space-y-6 px-6 py-10">
         {/* LIVE NUMBERS */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatTile label="Live now" value={active?.sessions.length ?? 0} icon={RadioIcon} live />
-          <StatTile label="Interviews" value={interviews.length} icon={UsersIcon} />
+          <StatTile label={t("hub.stat.live", "Live now")} value={active?.sessions.length ?? 0} icon={RadioIcon} live />
+          <StatTile label={t("hub.stat.interviews", "Interviews")} value={interviews.length} icon={UsersIcon} />
           <StatTile
-            label="Accepted"
+            label={t("hub.stat.accepted", "Accepted")}
             value={accepted}
             tone="success"
             icon={TrophyIcon}
-            hint={interviews.length ? `${Math.round((accepted / interviews.length) * 100)}% of finished` : undefined}
+            hint={
+              interviews.length
+                ? t("hub.stat.ofFinished", "{n}% of finished", { n: Math.round((accepted / interviews.length) * 100) })
+                : undefined
+            }
           />
-          <StatTile label="Time interviewing" value={formatDuration(totalSeconds)} icon={ClockIcon} />
+          <StatTile label={t("hub.stat.time", "Time interviewing")} value={formatDuration(totalSeconds)} icon={ClockIcon} />
         </div>
 
         {/* DAILY CHALLENGE + ACTIVITY */}
@@ -122,7 +132,7 @@ function HomeHubPage() {
           <DailyChallenge />
 
           <section className="panel p-6 lg:col-span-2">
-            <p className="eyebrow mb-5">Your activity</p>
+            <p className="eyebrow mb-5">{t("hub.activity", "Your activity")}</p>
             <ActivityHeatmap dates={interviews.map((item) => item.endedAt)} />
           </section>
         </div>
@@ -131,9 +141,9 @@ function HomeHubPage() {
 
         {/* SHORTCUTS */}
         <section>
-          <p className="eyebrow mb-4">Jump to</p>
+          <p className="eyebrow mb-4">{t("hub.jump", "Jump to")}</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {SHORTCUTS.map(({ to, label, text, icon: Icon }, idx) => (
+            {getShortcuts().map(({ to, label, text, icon: Icon }, idx) => (
               <Link
                 key={to}
                 to={to}

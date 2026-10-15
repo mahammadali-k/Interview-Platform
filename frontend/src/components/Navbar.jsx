@@ -5,13 +5,15 @@ import { UserButton } from "@clerk/clerk-react";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import CommandPalette from "./CommandPalette";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { t } from "../lib/i18n";
 
-const LINKS = [
-  { to: "/", label: "Home", icon: HouseIcon },
-  { to: "/problems", label: "Problems", icon: BookOpenIcon },
-  { to: "/questions", label: "Questions", icon: ListChecksIcon },
-  { to: "/history", label: "History", icon: HistoryIcon },
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboardIcon },
+const getLinks = () => [
+  { to: "/", label: t("nav.home", "Home"), icon: HouseIcon },
+  { to: "/problems", label: t("nav.problems", "Problems"), icon: BookOpenIcon },
+  { to: "/questions", label: t("nav.questions", "Questions"), icon: ListChecksIcon },
+  { to: "/history", label: t("nav.history", "History"), icon: HistoryIcon },
+  { to: "/dashboard", label: t("nav.dashboard", "Dashboard"), icon: LayoutDashboardIcon },
 ];
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
@@ -40,7 +42,7 @@ function Navbar() {
           <Logo />
 
           <div className="flex items-center gap-1">
-            {LINKS.map(({ to, label, icon: Icon }) => {
+            {getLinks().map(({ to, label, icon: Icon }) => {
               const active = pathname === to;
 
               return (
@@ -62,14 +64,15 @@ function Navbar() {
             <button
               className="btn btn-ghost btn-sm ml-2 hidden gap-2 border hairline text-base-content/60 sm:flex"
               onClick={() => setPaletteOpen(true)}
-              aria-label="Open command palette"
+              aria-label={t("nav.openPalette", "Open command palette")}
             >
               <SearchIcon className="size-4" />
-              <span className="hidden lg:inline">Search</span>
+              <span className="hidden lg:inline">{t("nav.search", "Search")}</span>
               <kbd className="kbd kbd-xs">{isMac ? "⌘" : "Ctrl"} K</kbd>
             </button>
 
             <div className="ml-3 flex items-center gap-2">
+              <LanguageSwitcher />
               <ThemeToggle />
               <UserButton />
             </div>

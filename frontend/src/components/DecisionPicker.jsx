@@ -1,15 +1,16 @@
 import { CheckCircle2Icon, XCircleIcon } from "lucide-react";
+import { t } from "../lib/i18n";
 
-const OPTIONS = [
-  { value: "accepted", label: "Accept", icon: CheckCircle2Icon, active: "border-success bg-success/10 text-success" },
-  { value: "rejected", label: "Reject", icon: XCircleIcon, active: "border-error bg-error/10 text-error" },
+const getOptions = () => [
+  { value: "accepted", label: t("decision.accept", "Accept"), icon: CheckCircle2Icon, active: "border-success bg-success/10 text-success" },
+  { value: "rejected", label: t("decision.reject", "Reject"), icon: XCircleIcon, active: "border-error bg-error/10 text-error" },
 ];
 
 // Accept / Reject toggle shared by the "end interview" dialog and the result editor
 function DecisionPicker({ value, onChange, suggested }) {
   return (
-    <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label="Decision">
-      {OPTIONS.map(({ value: option, label, icon: Icon, active }) => (
+    <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("decision.label", "Decision")}>
+      {getOptions().map(({ value: option, label, icon: Icon, active }) => (
         <button
           key={option}
           type="button"
@@ -23,7 +24,7 @@ function DecisionPicker({ value, onChange, suggested }) {
           <Icon className="size-4" />
           {label}
           {suggested === option && (
-            <span className="text-xs font-normal text-base-content/50">(suggested)</span>
+            <span className="text-xs font-normal text-base-content/50">{t("decision.suggested", "(suggested)")}</span>
           )}
         </button>
       ))}

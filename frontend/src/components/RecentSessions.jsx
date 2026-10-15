@@ -1,5 +1,7 @@
 import { ClockIcon, Code2Icon, TrophyIcon, UsersIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { dateLocale } from "../lib/dateLocale";
+import { t } from "../lib/i18n";
 import { Link } from "react-router";
 import DifficultyBadge from "./DifficultyBadge";
 import EmptyState from "./EmptyState";
@@ -24,22 +26,22 @@ function RecentCard({ session, index }) {
           <DifficultyBadge difficulty={session.difficulty} />
         </div>
 
-        {isActive && <span className="badge badge-success badge-outline badge-sm">ACTIVE</span>}
+        {isActive && <span className="badge badge-success badge-outline badge-sm">{t("dash.activeBadge", "ACTIVE")}</span>}
       </div>
 
       <div className="mb-4 space-y-2 text-sm text-base-content/70">
         <div className="flex items-center gap-2">
           <ClockIcon className="size-4" />
-          {formatDistanceToNow(new Date(session.createdAt), { addSuffix: true })}
+          {formatDistanceToNow(new Date(session.createdAt), { addSuffix: true, locale: dateLocale() })}
         </div>
         <div className="flex items-center gap-2">
           <UsersIcon className="size-4" />
-          {session.participant ? "2 participants" : "1 participant"}
+          {session.participant ? t("dash.two", "2 participants") : t("dash.one", "1 participant")}
         </div>
       </div>
 
       <div className="flex items-center justify-between border-t hairline pt-3">
-        <span className="eyebrow">{isActive ? "In progress" : "View feedback"}</span>
+        <span className="eyebrow">{isActive ? t("dash.inProgress", "In progress") : t("dash.viewFeedback", "View feedback")}</span>
         <span className="text-xs text-base-content/40">
           {new Date(session.updatedAt).toLocaleDateString()}
         </span>
@@ -51,7 +53,7 @@ function RecentCard({ session, index }) {
 function RecentSessions({ sessions, isLoading }) {
   return (
     <section className="panel animate-rise stagger mt-6 p-6" style={{ "--i": 2 }}>
-      <h2 className="mb-6 text-lg font-semibold">Your Past Sessions</h2>
+      <h2 className="mb-6 text-lg font-semibold">{t("dash.past", "Your Past Sessions")}</h2>
 
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -66,7 +68,11 @@ function RecentSessions({ sessions, isLoading }) {
           ))}
         </div>
       ) : (
-        <EmptyState icon={TrophyIcon} title="No sessions yet" hint="Start your first session today." />
+        <EmptyState
+          icon={TrophyIcon}
+          title={t("dash.noSessions", "No sessions yet")}
+          hint={t("dash.noSessionsHint", "Start your first session today.")}
+        />
       )}
     </section>
   );

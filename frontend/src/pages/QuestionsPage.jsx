@@ -7,10 +7,11 @@ import PageHeader from "../components/PageHeader";
 import QuestionEditorModal from "../components/QuestionEditorModal";
 import { useQuestionBank } from "../hooks/useSessions";
 import { OPTION_LETTERS as LETTERS } from "../lib/constants";
+import { t } from "../lib/i18n";
 
 const GENERAL = "*";
 
-const problemLabel = (problem) => (problem === GENERAL ? "General (every problem)" : problem);
+const problemLabel = (problem) => (problem === GENERAL ? t("qb.general", "General (every problem)") : problem);
 
 // the host's question bank: every new interview copies the questions of its problem
 function QuestionsPage() {
@@ -36,7 +37,7 @@ function QuestionsPage() {
   };
 
   const handleDuplicate = (question) => {
-    setTemplate({ ...question, id: undefined, question: `${question.question} (copy)` });
+    setTemplate({ ...question, id: undefined, question: `${question.question} ${t("qb.copySuffix", "(copy)")}` });
     setEditing(null);
   };
 
@@ -48,7 +49,7 @@ function QuestionsPage() {
   };
 
   const handleDelete = (question) => {
-    if (confirm("Delete this question from your bank? Running interviews keep their copy.")) {
+    if (confirm(t("qb.deleteConfirm", "Delete this question from your bank? Running interviews keep their copy."))) {
       bank.remove.mutate(question.id);
     }
   };
@@ -59,20 +60,20 @@ function QuestionsPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-10">
         <PageHeader
-          eyebrow="Interview content"
-          title="Question bank"
-          description="Add your own questions or edit the existing ones. New interviews copy the questions of their problem."
+          eyebrow={t("qb.eyebrow", "Interview content")}
+          title={t("palette.questions", "Question bank")}
+          description={t("qb.desc", "Add your own questions or edit the existing ones. New interviews copy the questions of their problem.")}
           actions={
             <button className="btn btn-primary gap-2" onClick={() => setEditing(null)}>
               <PlusIcon className="size-4" />
-              Add question
+              {t("q.add", "Add question")}
             </button>
           }
         />
 
         {/* FILTER */}
         <div className="mb-4 flex flex-wrap gap-2">
-          {[{ value: "all", label: "All" }, ...problemOptions].map(({ value, label }) => {
+          {[{ value: "all", label: t("prob.all", "All") }, ...problemOptions].map(({ value, label }) => {
             const count = value === "all" ? questions.length : questions.filter((q) => q.problem === value).length;
 
             return (
@@ -100,7 +101,11 @@ function QuestionsPage() {
           </div>
         ) : visible.length === 0 ? (
           <div className="panel">
-            <EmptyState icon={ListChecksIcon} title="No questions here" hint="Add one with the button above." />
+            <EmptyState
+              icon={ListChecksIcon}
+              title={t("qb.none", "No questions here")}
+              hint={t("qb.noneHint", "Add one with the button above.")}
+            />
           </div>
         ) : (
           <div className="space-y-3">
@@ -120,22 +125,22 @@ function QuestionsPage() {
                     <button
                       className="btn btn-ghost btn-sm btn-square"
                       onClick={() => handleDuplicate(q)}
-                      aria-label="Duplicate question"
-                      title="Duplicate"
+                      aria-label={t("qb.duplicate", "Duplicate question")}
+                      title={t("qb.dup", "Duplicate")}
                     >
                       <CopyIcon className="size-4" />
                     </button>
                     <button
                       className="btn btn-ghost btn-sm btn-square"
                       onClick={() => setEditing(q)}
-                      aria-label="Edit question"
+                      aria-label={t("q.edit", "Edit question")}
                     >
                       <PencilIcon className="size-4" />
                     </button>
                     <button
                       className="btn btn-ghost btn-sm btn-square text-error"
                       onClick={() => handleDelete(q)}
-                      aria-label="Delete question"
+                      aria-label={t("q.delete", "Delete question")}
                     >
                       <Trash2Icon className="size-4" />
                     </button>
@@ -167,7 +172,7 @@ function QuestionsPage() {
       {editing !== undefined && (
         <QuestionEditorModal
           key={editing?.id ?? (template ? "copy" : "new")}
-          title={editing ? "Edit question" : "Add question"}
+          title={editing ? t("q.edit", "Edit question") : t("q.add", "Add question")}
           initial={editing ?? template ?? { problem: filter === "all" ? GENERAL : filter }}
           problemOptions={problemOptions}
           isSaving={isSaving}

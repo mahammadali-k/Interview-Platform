@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { t } from "./i18n";
 
 /** copies text and tells the user how it went */
 export async function copyText(text, successMessage = "Copied") {
@@ -7,7 +8,7 @@ export async function copyText(text, successMessage = "Copied") {
     toast.success(successMessage);
     return true;
   } catch {
-    toast.error("Could not copy");
+    toast.error(t("copy.fail", "Could not copy"));
     return false;
   }
 }

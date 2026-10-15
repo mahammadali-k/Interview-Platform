@@ -1,3 +1,4 @@
+import { t } from "../lib/i18n";
 import { capitalize } from "../lib/utils";
 
 const TONES = {
@@ -13,7 +14,7 @@ function DifficultyBadge({ difficulty, className = "" }) {
 
   return (
     <span className={`badge badge-outline badge-sm font-medium ${tone} ${className}`}>
-      {capitalize(difficulty)}
+      {t(`difficulty.${difficulty.toLowerCase()}`, capitalize(difficulty))}
     </span>
   );
 }

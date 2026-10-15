@@ -1,5 +1,6 @@
 import { CheckCircle2Icon, Loader2Icon, PencilIcon, PlusIcon, SendIcon, Trash2Icon } from "lucide-react";
 import { OPTION_LETTERS as LETTERS } from "../lib/constants";
+import { t } from "../lib/i18n";
 
 
 function Option({ letter, text, state, onClick, disabled }) {
@@ -62,15 +63,15 @@ function QuizPanel({
     <div className="space-y-4 p-5">
       <div className="panel flex flex-wrap items-center justify-between gap-3 p-4">
         <div>
-          <p className="eyebrow">{isHost ? "Candidate progress" : "Quiz"}</p>
+          <p className="eyebrow">{isHost ? t("quiz.progress", "Candidate progress") : t("tab.quiz", "Quiz")}</p>
           <p className="mt-1 text-sm text-base-content/70">
             {isHost
               ? submitted
-                ? "The candidate has submitted the quiz."
-                : "Waiting for the candidate. The answer key is shown below."
+                ? t("quiz.hostSubmitted", "The candidate has submitted the quiz.")
+                : t("quiz.hostWaiting", "Waiting for the candidate. The answer key is shown below.")
               : submitted
-                ? "Answers submitted. Your feedback will be ready when the interview ends."
-                : "Answer what you can and submit. Skipped questions count as incorrect."}
+                ? t("quiz.candSubmitted", "Answers submitted. Your feedback will be ready when the interview ends.")
+                : t("quiz.candHint", "Answer what you can and submit. Skipped questions count as incorrect.")}
           </p>
         </div>
 
@@ -81,7 +82,7 @@ function QuizPanel({
           {isHost && (
             <button className="btn btn-primary btn-sm gap-2" onClick={onAddQuestion}>
               <PlusIcon className="size-4" />
-              Add question
+              {t("q.add", "Add question")}
             </button>
           )}
         </div>
@@ -89,7 +90,7 @@ function QuizPanel({
 
       {questions.length === 0 && (
         <p className="panel p-6 text-center text-sm text-base-content/60">
-          {isHost ? "No questions yet. Add one above." : "The interviewer has not added questions yet."}
+          {isHost ? t("quiz.noneHost", "No questions yet. Add one above.") : t("quiz.noneCand", "The interviewer has not added questions yet.")}
         </p>
       )}
 
@@ -111,14 +112,14 @@ function QuizPanel({
                   <button
                     className="btn btn-ghost btn-xs btn-square"
                     onClick={() => onEditQuestion(q)}
-                    aria-label="Edit question"
+                    aria-label={t("q.edit", "Edit question")}
                   >
                     <PencilIcon className="size-3.5" />
                   </button>
                   <button
                     className="btn btn-ghost btn-xs btn-square text-error"
                     onClick={() => onDeleteQuestion(q)}
-                    aria-label="Delete question"
+                    aria-label={t("q.delete", "Delete question")}
                   >
                     <Trash2Icon className="size-3.5" />
                   </button>
@@ -157,10 +158,10 @@ function QuizPanel({
         <button className="btn btn-primary w-full gap-2" disabled={isSubmitting} onClick={onSubmit}>
           {isSubmitting ? <Loader2Icon className="size-4 animate-spin" /> : <SendIcon className="size-4" />}
           {isSubmitting
-            ? "Submitting..."
+            ? t("quiz.submitting", "Submitting...")
             : answered === questions.length
-              ? "Submit answers"
-              : `Submit ${answered} of ${questions.length} answers`}
+              ? t("quiz.submit", "Submit answers")
+              : t("quiz.submitPartial", "Submit {a} of {b} answers", { a: answered, b: questions.length })}
         </button>
       )}
     </div>

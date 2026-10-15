@@ -7,8 +7,9 @@ import StatTile from "../components/StatTile";
 import DifficultyBadge from "../components/DifficultyBadge";
 import useStartInterview from "../hooks/useStartInterview";
 import { PROBLEM_LIST } from "../data/problems";
+import { t } from "../lib/i18n";
 
-const FILTERS = ["All", "Easy", "Medium", "Hard"];
+const FILTER_KEYS = ["All", "Easy", "Medium", "Hard"];
 
 const countBy = (difficulty) => PROBLEM_LIST.filter((p) => p.difficulty === difficulty).length;
 
@@ -33,16 +34,16 @@ function ProblemsPage() {
 
       <main className="mx-auto max-w-6xl px-4 py-10">
         <PageHeader
-          eyebrow="Practice"
-          title="Practice Problems"
-          description="Sharpen your coding skills, or start a live interview with any of these problems."
+          eyebrow={t("prob.eyebrow", "Practice")}
+          title={t("prob.title", "Practice Problems")}
+          description={t("prob.desc", "Sharpen your coding skills, or start a live interview with any of these problems.")}
         />
 
         <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatTile label="Total" value={PROBLEM_LIST.length} />
-          <StatTile label="Easy" value={countBy("Easy")} tone="success" />
-          <StatTile label="Medium" value={countBy("Medium")} tone="warning" />
-          <StatTile label="Hard" value={countBy("Hard")} tone="error" />
+          <StatTile label={t("prob.total", "Total")} value={PROBLEM_LIST.length} />
+          <StatTile label={t("difficulty.easy", "Easy")} value={countBy("Easy")} tone="success" />
+          <StatTile label={t("difficulty.medium", "Medium")} value={countBy("Medium")} tone="warning" />
+          <StatTile label={t("difficulty.hard", "Hard")} value={countBy("Hard")} tone="error" />
         </div>
 
         <div className="panel mb-4 flex flex-wrap items-center gap-3 p-3">
@@ -50,20 +51,20 @@ function ProblemsPage() {
             <SearchIcon className="size-4 text-base-content/50" />
             <input
               type="search"
-              placeholder="Search problems"
+              placeholder={t("prob.search", "Search problems")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </label>
 
           <div className="flex gap-1">
-            {FILTERS.map((level) => (
+            {FILTER_KEYS.map((level) => (
               <button
                 key={level}
                 onClick={() => setDifficulty(level)}
                 className={`btn btn-sm ${difficulty === level ? "btn-primary" : "btn-ghost"}`}
               >
-                {level}
+                {level === "All" ? t("prob.all", "All") : t(`difficulty.${level.toLowerCase()}`, level)}
               </button>
             ))}
           </div>
@@ -71,7 +72,7 @@ function ProblemsPage() {
 
         <div className="panel divide-y divide-base-content/10">
           {visible.length === 0 && (
-            <p className="p-8 text-center text-sm text-base-content/60">No problems match your filters.</p>
+            <p className="p-8 text-center text-sm text-base-content/60">{t("prob.none", "No problems match your filters.")}</p>
           )}
 
           {visible.map((problem, idx) => (
@@ -95,7 +96,7 @@ function ProblemsPage() {
                 </div>
 
                 <span className="flex items-center gap-1 text-sm font-medium text-primary">
-                  Solve
+                  {t("prob.solve", "Solve")}
                   <ChevronRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
@@ -104,10 +105,10 @@ function ProblemsPage() {
                 className="btn btn-outline btn-sm gap-2"
                 disabled={isStarting}
                 onClick={() => start(problem)}
-                title="Start a live interview with this problem"
+                title={t("prob.startTitle", "Start a live interview with this problem")}
               >
                 {isStarting ? <Loader2Icon className="size-4 animate-spin" /> : <UsersIcon className="size-4" />}
-                Interview
+                {t("prob.interview", "Interview")}
               </button>
             </div>
           ))}

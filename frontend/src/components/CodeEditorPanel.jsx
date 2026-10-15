@@ -4,6 +4,7 @@ import { CopyIcon, Loader2Icon, MinusIcon, PlayIcon, PlusIcon, RotateCcwIcon } f
 import { copyText } from "../lib/clipboard";
 import { LANGUAGE_CONFIG } from "../data/problems";
 import { useTheme } from "../lib/theme";
+import { t } from "../lib/i18n";
 
 const MIN_FONT = 12;
 const MAX_FONT = 24;
@@ -49,7 +50,7 @@ function CodeEditorPanel({
   };
 
   const handleReset = () => {
-    if (confirm("Reset the editor to the starter code? Your changes will be lost.")) onReset();
+    if (confirm(t("editor.resetConfirm", "Reset the editor to the starter code? Your changes will be lost."))) onReset();
   };
 
   return (
@@ -68,7 +69,7 @@ function CodeEditorPanel({
 
         <div className="flex items-center gap-1">
           <IconButton
-            label="Smaller text"
+            label={t("editor.smaller", "Smaller text")}
             onClick={() => setFontSize((size) => Math.max(MIN_FONT, size - 1))}
             disabled={fontSize <= MIN_FONT}
           >
@@ -76,7 +77,7 @@ function CodeEditorPanel({
           </IconButton>
           <span className="w-6 text-center font-mono text-xs text-base-content/60">{fontSize}</span>
           <IconButton
-            label="Larger text"
+            label={t("editor.larger", "Larger text")}
             onClick={() => setFontSize((size) => Math.min(MAX_FONT, size + 1))}
             disabled={fontSize >= MAX_FONT}
           >
@@ -85,11 +86,11 @@ function CodeEditorPanel({
 
           <span className="mx-1 h-5 w-px bg-base-content/15" />
 
-          <IconButton label="Copy code" onClick={() => copyText(code, "Code copied")}>
+          <IconButton label={t("editor.copy", "Copy code")} onClick={() => copyText(code, t("editor.copied", "Code copied"))}>
             <CopyIcon className="size-4" />
           </IconButton>
           {onReset && (
-            <IconButton label="Reset to starter code" onClick={handleReset}>
+            <IconButton label={t("editor.reset", "Reset to starter code")} onClick={handleReset}>
               <RotateCcwIcon className="size-4" />
             </IconButton>
           )}
@@ -98,10 +99,10 @@ function CodeEditorPanel({
             className="btn btn-primary btn-sm ml-2 gap-2"
             disabled={isRunning}
             onClick={onRunCode}
-            title="Run code (Ctrl/Cmd + Enter)"
+            title={t("editor.runHint", "Run code (Ctrl/Cmd + Enter)")}
           >
             {isRunning ? <Loader2Icon className="size-4 animate-spin" /> : <PlayIcon className="size-4" />}
-            {isRunning ? "Running..." : "Run Code"}
+            {isRunning ? t("editor.running", "Running...") : t("editor.run", "Run Code")}
           </button>
         </div>
       </div>

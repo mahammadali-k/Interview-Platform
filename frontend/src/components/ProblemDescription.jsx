@@ -1,6 +1,7 @@
 import { Loader2Icon, UsersIcon } from "lucide-react";
 import DifficultyBadge from "./DifficultyBadge";
 import useStartInterview from "../hooks/useStartInterview";
+import { t } from "../lib/i18n";
 import ProblemDetails from "./ProblemDetails";
 
 function ProblemDescription({ problem, currentProblemId, onProblemChange, allProblems }) {
@@ -33,7 +34,7 @@ function ProblemDescription({ problem, currentProblemId, onProblemChange, allPro
           onClick={() => start(problem)}
         >
           {isStarting ? <Loader2Icon className="size-4 animate-spin" /> : <UsersIcon className="size-4" />}
-          Start a live interview with this problem
+          {t("prob.startTitle", "Start a live interview with this problem")}
         </button>
       </header>
 

@@ -1,5 +1,6 @@
 import { CrownIcon, UserIcon } from "lucide-react";
 import IconTile from "./IconTile";
+import { t } from "../lib/i18n";
 
 const TONES = {
   success: "badge-success",
@@ -17,7 +18,7 @@ function Person({ icon: Icon, role, name, isYou, status, tone, muted }) {
         <p className="eyebrow">{role}</p>
         <p className={`truncate text-sm font-medium ${muted ? "text-base-content/50" : ""}`}>
           {name}
-          {isYou && <span className="ml-1.5 text-xs font-normal text-base-content/50">(you)</span>}
+          {isYou && <span className="ml-1.5 text-xs font-normal text-base-content/50">{t("session.you", "(you)")}</span>}
         </p>
       </div>
 
@@ -32,28 +33,28 @@ function SessionStatusBar({ session, userId }) {
   const completed = status === "completed";
 
   const candidateStatus = completed
-    ? { label: "Finished", tone: "neutral" }
+    ? { label: t("status.finished", "Finished"), tone: "neutral" }
     : !participant
-      ? { label: "Waiting", tone: "warning" }
+      ? { label: t("status.waiting", "Waiting"), tone: "warning" }
       : quizSubmittedAt
-        ? { label: "Quiz submitted", tone: "info" }
-        : { label: "In interview", tone: "success" };
+        ? { label: t("status.quizSubmitted", "Quiz submitted"), tone: "info" }
+        : { label: t("status.inInterview", "In interview"), tone: "success" };
 
   return (
     <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
       <Person
         icon={CrownIcon}
-        role="Interviewer"
-        name={host?.name || "Loading..."}
+        role={t("session.interviewer", "Interviewer")}
+        name={host?.name || t("common.loadingDots", "Loading...")}
         isYou={host?.clerkId === userId}
-        status={completed ? "Finished" : "Host"}
+        status={completed ? t("status.finished", "Finished") : t("status.host", "Host")}
         tone={completed ? "neutral" : "success"}
       />
 
       <Person
         icon={UserIcon}
-        role="Candidate"
-        name={participant?.name || "Waiting for candidate..."}
+        role={t("session.candidate", "Candidate")}
+        name={participant?.name || t("session.waitingDots", "Waiting for candidate...")}
         isYou={participant?.clerkId === userId}
         status={candidateStatus.label}
         tone={candidateStatus.tone}

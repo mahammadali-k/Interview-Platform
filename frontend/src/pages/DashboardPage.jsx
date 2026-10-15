@@ -10,6 +10,7 @@ import ActiveSessions from "../components/ActiveSessions";
 import RecentSessions from "../components/RecentSessions";
 import CreateSessionModal from "../components/CreateSessionModal";
 import EditSessionModal from "../components/EditSessionModal";
+import EndSessionDialog from "../components/EndSessionDialog";
 
 const EMPTY_ROOM = { problem: "", difficulty: "", timeLimitMinutes: 0 };
 
@@ -19,6 +20,7 @@ function DashboardPage() {
   const [params, setParams] = useSearchParams();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingSession, setEditingSession] = useState(null);
+  const [endingSession, setEndingSession] = useState(null);
   const [roomConfig, setRoomConfig] = useState(EMPTY_ROOM);
 
   const createSessionMutation = useCreateSession();
@@ -80,6 +82,7 @@ function DashboardPage() {
               isUserInSession={isUserInSession}
               isHostOf={isHostOf}
               onEdit={setEditingSession}
+              onEnd={setEndingSession}
             />
           </div>
 
@@ -93,6 +96,10 @@ function DashboardPage() {
           session={activeSessions.find((s) => s._id === editingSession._id) || editingSession}
           onClose={() => setEditingSession(null)}
         />
+      )}
+
+      {endingSession && (
+        <EndSessionDialog session={endingSession} onClose={() => setEndingSession(null)} />
       )}
 
       {showCreateModal && (

@@ -23,7 +23,8 @@ import { copyText } from "../lib/clipboard";
 import { useEmailReport, useSessionReport, useUpdateResult } from "../hooks/useSessions";
 import { downloadReportPdf } from "../lib/download";
 import { formatDuration } from "../lib/utils";
-
+import { dateLocale } from "../lib/dateLocale";
+import { t } from "../lib/i18n";
 
 // host-only: change the final decision or the notes after the interview
 function ResultEditor({ id, result }) {
@@ -39,18 +40,18 @@ function ResultEditor({ id, result }) {
 
   return (
     <section className="panel space-y-4 p-5">
-      <p className="eyebrow">Interviewer decision</p>
+      <p className="eyebrow">{t("result.decision", "Interviewer decision")}</p>
 
       <DecisionPicker value={decision} onChange={setDecision} />
 
       <div>
-        <p className="eyebrow mb-2">Rating</p>
+        <p className="eyebrow mb-2">{t("rating.label", "Rating")}</p>
         <StarRating value={rating} onChange={setRating} />
       </div>
 
       <textarea
         className="textarea textarea-bordered h-24 w-full"
-        placeholder="Notes for the candidate (included in the PDF)"
+        placeholder={t("result.notesPlaceholder", "Notes for the candidate (included in the PDF)")}
         maxLength={2000}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
@@ -58,7 +59,7 @@ function ResultEditor({ id, result }) {
 
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs text-base-content/50">
-          Re-send the email after changing the decision so the candidate receives the update.
+          {t("result.resend", "Re-send the email after changing the decision so the candidate receives the update.")}
         </p>
         <button
           className="btn btn-primary btn-sm gap-2"
@@ -66,7 +67,7 @@ function ResultEditor({ id, result }) {
           onClick={() => updateResult.mutate({ id, decision, notes, rating })}
         >
           {updateResult.isPending && <Loader2Icon className="size-4 animate-spin" />}
-          Save
+          {t("common.save", "Save")}
         </button>
       </div>
     </section>
@@ -86,7 +87,7 @@ function ResultPage() {
       await downloadReportPdf(id, report.session.problem);
     } catch (error) {
       console.error("Failed to download the PDF", error);
-      toast.error("Could not download the PDF");
+      toast.error(t("result.pdfFail", "Could not download the PDF"));
     } finally {
       setIsDownloading(false);
     }
@@ -105,7 +106,7 @@ function ResultPage() {
       // storage unavailable: just download
     }
 
-    downloadReportPdf(id, report.session.problem).catch(() => toast.error("Could not download the PDF"));
+    downloadReportPdf(id, report.session.problem).catch(() => toast.error(t("result.pdfFail", "Could not download the PDF")));
   }, [report, id]);
 
   if (isError) return <Navigate to="/dashboard" replace />;
@@ -128,18 +129,18 @@ function ResultPage() {
           className="inline-flex items-center gap-2 text-sm text-base-content/60 hover:text-base-content"
         >
           <ArrowLeftIcon className="size-4" />
-          {isHost ? "Back to history" : "Back to dashboard"}
+          {isHost ? t("result.backHistory", "Back to history") : t("common.backDashboard", "Back to dashboard")}
         </Link>
 
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="eyebrow mb-2">Interview feedback</p>
+            <p className="eyebrow mb-2">{t("result.eyebrow", "Interview feedback")}</p>
             <h1 className="text-3xl font-semibold">{session.problem}</h1>
             <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-base-content/60">
               <DifficultyBadge difficulty={session.difficulty} />
-              <span>{new Date(session.endedAt).toLocaleString()}</span>
+              <span>{new Date(session.endedAt).toLocaleString(dateLocale().code)}</span>
               <span>
-                {session.candidate?.name || "Candidate"} · interviewer {session.host?.name}
+                {session.candidate?.name || t("session.candidate", "Candidate")} · {t("session.interviewerLower", "interviewer")} {session.host?.name}
               </span>
             </div>
           </div>
@@ -147,10 +148,10 @@ function ResultPage() {
           <div className="flex flex-wrap gap-2">
             <button
               className="btn btn-ghost gap-2"
-              onClick={() => copyText(window.location.href, "Report link copied")}
+              onClick={() => copyText(window.location.href, t("result.linkCopied", "Report link copied"))}
             >
               <LinkIcon className="size-4" />
-              Copy link
+              {t("result.copyLink", "Copy link")}
             </button>
 
             <button
@@ -158,18 +159,18 @@ function ResultPage() {
               onClick={() =>
                 copyText(
                   [
-                    `${session.candidate?.name || "Candidate"} - ${session.problem}`,
-                    `Result: ${accepted ? "Accepted" : "Not accepted"}`,
-                    `Quiz: ${quiz.correct}/${quiz.total} correct`,
-                    `Coding task: ${result.testsPassed ? "passed" : "not passed"}`,
-                    `Time spent: ${formatDuration(session.durationSeconds)}`,
+                    `${session.candidate?.name || t("session.candidate", "Candidate")} - ${session.problem}`,
+                    `${t("result.sumResult", "Result")}: ${accepted ? t("result.accepted", "Accepted") : t("result.notAccepted", "Not accepted")}`,
+                    `${t("tab.quiz", "Quiz")}: ${t("end.nCorrect", "{a}/{b} correct", { a: quiz.correct, b: quiz.total })}`,
+                    `${t("result.coding", "Coding task")}: ${result.testsPassed ? t("result.passed", "Passed") : t("result.notPassed", "Not passed")}`,
+                    `${t("result.time", "Time spent")}: ${formatDuration(session.durationSeconds)}`,
                   ].join("\n"),
-                  "Summary copied"
+                  t("result.summaryCopied", "Summary copied")
                 )
               }
             >
               <CopyIcon className="size-4" />
-              Copy summary
+              {t("result.copySummary", "Copy summary")}
             </button>
 
             {isHost && session.candidate && (
@@ -177,14 +178,18 @@ function ResultPage() {
                 className="btn btn-outline gap-2"
                 onClick={() => emailReport.mutate(id)}
                 disabled={emailReport.isPending || !report.emailEnabled}
-                title={report.emailEnabled ? "Email the PDF to the candidate" : "Email is not configured on the server"}
+                title={
+                  report.emailEnabled
+                    ? t("result.emailTitle", "Email the PDF to the candidate")
+                    : t("result.emailOff", "Email is not configured on the server")
+                }
               >
                 {emailReport.isPending ? (
                   <Loader2Icon className="size-4 animate-spin" />
                 ) : (
                   <MailIcon className="size-4" />
                 )}
-                Send by email
+                {t("result.sendEmail", "Send by email")}
               </button>
             )}
 
@@ -194,7 +199,7 @@ function ResultPage() {
               ) : (
                 <DownloadIcon className="size-4" />
               )}
-              Download PDF
+              {t("result.download", "Download PDF")}
             </button>
           </div>
         </header>
@@ -211,42 +216,46 @@ function ResultPage() {
             <XCircleIcon className="size-10 shrink-0 text-error" />
           )}
           <div>
-            <h2 className="text-2xl font-semibold">{accepted ? "Accepted" : "Not accepted"}</h2>
+            <h2 className="text-2xl font-semibold">{accepted ? t("result.accepted", "Accepted") : t("result.notAccepted", "Not accepted")}</h2>
             <p className="text-base-content/70">
               {isHost
                 ? accepted
-                  ? "The candidate met the requirements of this interview."
-                  : "The candidate did not meet the requirements of this interview."
+                  ? t("result.hostAccepted", "The candidate met the requirements of this interview.")
+                  : t("result.hostRejected", "The candidate did not meet the requirements of this interview.")
                 : accepted
-                  ? "You met the requirements of this interview."
-                  : "You did not meet the requirements of this interview. Review the corrections below."}
-              {result.endedBy === "candidate" && " The candidate finished the interview themselves."}
+                  ? t("result.candAccepted", "You met the requirements of this interview.")
+                  : t("result.candRejected", "You did not meet the requirements of this interview. Review the corrections below.")}
+              {result.endedBy === "candidate" && ` ${t("result.selfFinished", "The candidate finished the interview themselves.")}`}
             </p>
           </div>
         </section>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatTile
-            label="Time spent"
+            label={t("result.time", "Time spent")}
             value={formatDuration(session.durationSeconds)}
-            hint={session.joinedAt ? `Joined ${new Date(session.joinedAt).toLocaleTimeString()}` : "In the room"}
+            hint={
+              session.joinedAt
+                ? t("result.joined", "Joined {time}", { time: new Date(session.joinedAt).toLocaleTimeString(dateLocale().code) })
+                : t("result.inRoom", "In the room")
+            }
           />
           <StatTile
-            label="Coding task"
-            value={result.testsPassed ? "Passed" : "Not passed"}
-            hint={`${code.runs} run${code.runs === 1 ? "" : "s"}, ${code.passedRuns} passed`}
+            label={t("result.coding", "Coding task")}
+            value={result.testsPassed ? t("result.passed", "Passed") : t("result.notPassed", "Not passed")}
+            hint={t("result.runs", "{n} runs, {p} passed", { n: code.runs, p: code.passedRuns })}
             tone={result.testsPassed ? "success" : "error"}
           />
           <StatTile
-            label="Quiz score"
+            label={t("result.quizScore", "Quiz score")}
             value={`${quiz.correct}/${quiz.total}`}
-            hint={quiz.submitted ? `${quiz.percent}% correct` : "Not submitted"}
+            hint={quiz.submitted ? t("result.percentCorrect", "{n}% correct", { n: quiz.percent }) : t("end.notSubmitted", "Not submitted")}
             tone={quiz.submitted && quiz.percent >= PASS_PERCENT ? "success" : "error"}
           />
           <StatTile
-            label="Mistakes"
+            label={t("result.mistakes", "Mistakes")}
             value={quiz.incorrect + quiz.unanswered}
-            hint={`${quiz.incorrect} wrong · ${quiz.unanswered} unanswered`}
+            hint={t("result.wrongUnanswered", "{w} wrong · {u} unanswered", { w: quiz.incorrect, u: quiz.unanswered })}
             tone={quiz.incorrect + quiz.unanswered === 0 ? "success" : "error"}
           />
         </div>
@@ -254,10 +263,13 @@ function ResultPage() {
         {isHost && session.candidate && (
           <p className="text-sm text-base-content/60">
             {email?.sentAt
-              ? `Feedback emailed to ${email.to} on ${new Date(email.sentAt).toLocaleString()}.`
+              ? t("result.emailedTo", "Feedback emailed to {to} on {date}.", {
+                  to: email.to,
+                  date: new Date(email.sentAt).toLocaleString(dateLocale().code),
+                })
               : email?.error
-                ? `Feedback email was not sent: ${email.error}.`
-                : "Feedback email has not been sent yet."}
+                ? t("result.emailError", "Feedback email was not sent: {error}.", { error: email.error })
+                : t("result.emailNot", "Feedback email has not been sent yet.")}
           </p>
         )}
 
@@ -266,7 +278,7 @@ function ResultPage() {
         ) : (
           (result.notes || result.rating) && (
             <section className="panel space-y-3 p-5">
-              <p className="eyebrow">Interviewer feedback</p>
+              <p className="eyebrow">{t("result.interviewerFeedback", "Interviewer feedback")}</p>
               {result.rating && <StarRating value={result.rating} readOnly size="size-5" />}
               {result.notes && <p className="whitespace-pre-wrap leading-relaxed">{result.notes}</p>}
             </section>
@@ -275,7 +287,7 @@ function ResultPage() {
 
         {/* QUIZ REVIEW */}
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold">Quiz review</h2>
+          <h2 className="text-lg font-semibold">{t("result.review", "Quiz review")}</h2>
 
           {quiz.items.map((item, idx) => (
             <article
@@ -289,22 +301,26 @@ function ResultPage() {
                   {item.question}
                 </h3>
                 <span className={`badge badge-outline badge-sm ${item.isCorrect ? "badge-success" : "badge-error"}`}>
-                  {item.isCorrect ? "Correct" : item.selected === null ? "Unanswered" : "Incorrect"}
+                  {item.isCorrect
+                    ? t("result.correct", "Correct")
+                    : item.selected === null
+                      ? t("result.unanswered", "Unanswered")
+                      : t("result.incorrect", "Incorrect")}
                 </span>
               </div>
 
               <div className="space-y-1.5 text-sm">
                 <p>
-                  <span className="text-base-content/50">{isHost ? "Candidate's answer: " : "Your answer: "}</span>
+                  <span className="text-base-content/50">{isHost ? t("result.candAnswer", "Candidate's answer: ") : t("result.yourAnswer", "Your answer: ")}</span>
                   <span className={item.isCorrect ? "text-success" : "text-error"}>
                     {item.selected === null
-                      ? "No answer"
+                      ? t("result.noAnswer", "No answer")
                       : `${LETTERS[item.selected]}. ${item.options[item.selected]}`}
                   </span>
                 </p>
                 {!item.isCorrect && (
                   <p>
-                    <span className="text-base-content/50">Correct answer: </span>
+                    <span className="text-base-content/50">{t("result.correctAnswer", "Correct answer: ")}</span>
                     <span className="text-success">
                       {LETTERS[item.answer]}. {item.options[item.answer]}
                     </span>
@@ -320,11 +336,11 @@ function ResultPage() {
         {code.lastRun && (
           <section className="panel p-5">
             <div className="mb-3 flex items-center justify-between">
-              <p className="eyebrow">Last code submission ({code.lastRun.language})</p>
+              <p className="eyebrow">{t("result.lastCode", "Last code submission ({lang})", { lang: code.lastRun.language })}</p>
               <span
                 className={`badge badge-outline badge-sm ${code.lastRun.passed ? "badge-success" : "badge-error"}`}
               >
-                {code.lastRun.passed ? "Passed" : "Failed"}
+                {code.lastRun.passed ? t("result.passed", "Passed") : t("result.failed", "Failed")}
               </span>
             </div>
             <pre className="max-h-80 overflow-auto rounded-lg border hairline bg-base-200 p-4 font-mono text-xs">

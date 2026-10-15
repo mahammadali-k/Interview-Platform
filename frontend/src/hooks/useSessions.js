@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { questionApi, sessionApi } from "../api/sessions";
+import { t } from "../lib/i18n";
 
 const errorMessage = (error, fallback) => error.response?.data?.message || fallback;
 
@@ -8,8 +9,8 @@ export const useCreateSession = () =>
   useMutation({
     mutationKey: ["createSession"],
     mutationFn: sessionApi.createSession,
-    onSuccess: () => toast.success("Session created successfully!"),
-    onError: (error) => toast.error(errorMessage(error, "Failed to create room")),
+    onSuccess: () => toast.success(t("toast.created", "Session created successfully!")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.createFail", "Failed to create room"))),
   });
 
 export const useActiveSessions = () =>
@@ -36,16 +37,16 @@ export const useJoinSession = () =>
   useMutation({
     mutationKey: ["joinSession"],
     mutationFn: sessionApi.joinSession,
-    onSuccess: () => toast.success("Joined session successfully!"),
-    onError: (error) => toast.error(errorMessage(error, "Failed to join session")),
+    onSuccess: () => toast.success(t("toast.joined", "Joined session successfully!")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.joinFail", "Failed to join session"))),
   });
 
 export const useEndSession = () =>
   useMutation({
     mutationKey: ["endSession"],
     mutationFn: sessionApi.endSession,
-    onSuccess: () => toast.success("Session ended successfully!"),
-    onError: (error) => toast.error(errorMessage(error, "Failed to end session")),
+    onSuccess: () => toast.success(t("toast.ended", "Session ended successfully!")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.endFail", "Failed to end session"))),
   });
 
 // host actions on a running session (edit problem, remove candidate)
@@ -63,19 +64,19 @@ export const useManageSession = () => {
   const update = useMutation({
     mutationFn: sessionApi.updateSession,
     onSuccess: (data, variables) => {
-      toast.success("Session updated");
+      toast.success(t("toast.updated", "Session updated"));
       refresh(data, variables);
     },
-    onError: (error) => toast.error(errorMessage(error, "Failed to update the session")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.updateFail", "Failed to update the session"))),
   });
 
   const removeCandidate = useMutation({
     mutationFn: sessionApi.removeParticipant,
     onSuccess: (data, variables) => {
-      toast.success("Candidate removed");
+      toast.success(t("toast.removed", "Candidate removed"));
       refresh(data, variables);
     },
-    onError: (error) => toast.error(errorMessage(error, "Failed to remove the candidate")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.removeFail", "Failed to remove the candidate"))),
   });
 
   return { update, removeCandidate };
@@ -99,7 +100,7 @@ export const useSubmitQuiz = () => {
     mutationKey: ["submitQuiz"],
     mutationFn: sessionApi.submitQuiz,
     onSuccess: (_, { id }) => queryClient.invalidateQueries({ queryKey: ["quiz", id] }),
-    onError: (error) => toast.error(errorMessage(error, "Failed to submit answers")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.submitFail", "Failed to submit answers"))),
   });
 };
 
@@ -107,7 +108,7 @@ export const useSubmitQuiz = () => {
 export const useSessionQuestions = () => {
   const queryClient = useQueryClient();
   const refresh = (_, { id }) => queryClient.invalidateQueries({ queryKey: ["quiz", id] });
-  const onError = (error) => toast.error(errorMessage(error, "Failed to change the question"));
+  const onError = (error) => toast.error(errorMessage(error, t("toast.qFail", "Failed to change the question")));
 
   return {
     add: useMutation({ mutationFn: sessionApi.addQuestion, onSuccess: refresh, onError }),
@@ -132,11 +133,11 @@ export const useUpdateResult = () => {
   return useMutation({
     mutationFn: sessionApi.updateResult,
     onSuccess: (_, { id }) => {
-      toast.success("Result updated");
+      toast.success(t("toast.resultUpdated", "Result updated"));
       queryClient.invalidateQueries({ queryKey: ["report", id] });
       queryClient.invalidateQueries({ queryKey: ["history"] });
     },
-    onError: (error) => toast.error(errorMessage(error, "Failed to update the result")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.resultFail", "Failed to update the result"))),
   });
 };
 
@@ -146,10 +147,10 @@ export const useEmailReport = () => {
   return useMutation({
     mutationFn: sessionApi.emailReport,
     onSuccess: (data, id) => {
-      toast.success(`Feedback sent to ${data.to}`);
+      toast.success(t("toast.emailSent", "Feedback sent to {to}", { to: data.to }));
       queryClient.invalidateQueries({ queryKey: ["report", id] });
     },
-    onError: (error) => toast.error(errorMessage(error, "Could not send the email")),
+    onError: (error) => toast.error(errorMessage(error, t("toast.emailFail", "Could not send the email"))),
   });
 };
 
@@ -159,14 +160,14 @@ export const useQuestionBank = () => {
   const queryClient = useQueryClient();
   const query = useQuery({ queryKey: ["questions"], queryFn: questionApi.list });
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["questions"] });
-  const onError = (error) => toast.error(errorMessage(error, "Failed to save the question"));
+  const onError = (error) => toast.error(errorMessage(error, t("toast.qSaveFail", "Failed to save the question")));
 
   return {
     ...query,
     create: useMutation({
       mutationFn: questionApi.create,
       onSuccess: () => {
-        toast.success("Question added");
+        toast.success(t("toast.qAdded", "Question added"));
         refresh();
       },
       onError,
@@ -174,7 +175,7 @@ export const useQuestionBank = () => {
     update: useMutation({
       mutationFn: questionApi.update,
       onSuccess: () => {
-        toast.success("Question updated");
+        toast.success(t("toast.qUpdated", "Question updated"));
         refresh();
       },
       onError,
@@ -182,7 +183,7 @@ export const useQuestionBank = () => {
     remove: useMutation({
       mutationFn: questionApi.remove,
       onSuccess: () => {
-        toast.success("Question deleted");
+        toast.success(t("toast.qDeleted", "Question deleted"));
         refresh();
       },
       onError,

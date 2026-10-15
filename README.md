@@ -204,8 +204,4 @@ environment variables above on the host.
 
 **Mahammadali**: [github.com/mahammadali-k](https://github.com/mahammadali-k)
 
-## Acknowledgements
 
-Started from the open-source tutorial project
-[burakorkmez/talent-IQ](https://github.com/burakorkmez/talent-IQ), then redesigned, extended
-(quiz, results, feedback PDF and email, server-side code execution, history) and optimised.

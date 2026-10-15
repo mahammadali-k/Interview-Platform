@@ -20,6 +20,12 @@ export const ENV = {
   PISTON_URL: process.env.PISTON_URL || "https://emkc.org/api/v2/piston",
   PISTON_API_KEY: process.env.PISTON_API_KEY,
 
+  // live call translation: "mymemory" (default, free), "deepl" or "google" (need an API key)
+  TRANSLATE_PROVIDER: process.env.TRANSLATE_PROVIDER || "mymemory",
+  MYMEMORY_EMAIL: process.env.MYMEMORY_EMAIL, // optional: raises the free daily quota
+  DEEPL_API_KEY: process.env.DEEPL_API_KEY,
+  GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY,
+
   // feedback emails (any SMTP provider); disabled when SMTP_HOST is empty
   SMTP_HOST: process.env.SMTP_HOST,
   SMTP_PORT: Number(process.env.SMTP_PORT) || 587,

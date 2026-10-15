@@ -427,4 +427,11 @@ export default {
   "toast.resultFail": "Nəticəni yeniləmək mümkün olmadı",
   "toast.emailSent": "Rəy {to} ünvanına göndərildi",
   "toast.emailFail": "Email göndərmək mümkün olmadı",
+
+  // live translation
+  "cc.title": "Danışığın sizin dilinizə canlı tərcüməsi",
+  "cc.toggle": "Canlı tərcümə",
+  "cc.speak": "Mən danışıram",
+  "cc.translating": "tərcümə olunur...",
+  "cc.unsupported": "Bu brauzerdə nitq tanıma mövcud deyil (Chrome, Edge və ya Safari istifadə edin). Qarşı tərəfin tərcümə olunmuş danışığını yenə də görəcəksiniz.",
 };

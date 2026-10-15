@@ -13,6 +13,7 @@ import chatRoutes from "./routes/chatRoutes.js";
 import sessionRoutes from "./routes/sessionRoute.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import executeRoutes from "./routes/executeRoutes.js";
+import translateRoutes from "./routes/translateRoutes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/execute", executeRoutes);
+app.use("/api/translate", translateRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({ msg: "api is up and running" });

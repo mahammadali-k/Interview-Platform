@@ -11,6 +11,7 @@
 
 - **1-on-1 interview rooms** with video, screen sharing, mic/camera controls and recording
 - **Real-time chat** inside every session
+- **Live translation of speech** in the video call: each person's speech is transcribed in their browser and shown to the other side as subtitles translated into the page language (English, Azerbaijani, Russian)
 - **Code editor** powered by Monaco (the VS Code editor) with JavaScript, Python and Java
 - **Server-side code execution** in a remote sandbox (Judge0 or Piston). The server judges the output, so a result cannot be faked from the browser
 - **Practice mode**: solve curated problems on your own
@@ -121,6 +122,7 @@ Optional backend settings (see `backend/.env.example`):
 | Variable | Purpose |
 | --- | --- |
 | `CODE_RUNNER`, `JUDGE0_URL`, `PISTON_URL` | Which sandbox executes code. The public Piston API is whitelist-only since Feb 2026, so Judge0 is the default |
+| `TRANSLATE_PROVIDER`, `MYMEMORY_EMAIL`, `DEEPL_API_KEY`, `GOOGLE_TRANSLATE_API_KEY` | Translation service for live call subtitles. The free MyMemory service is the default; DeepL or Google give better quality and higher limits |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM` | Any SMTP provider (for Gmail use an app password). Without `SMTP_HOST` feedback emails are disabled and the PDF is still downloadable |
 
 > `.env` files are git-ignored. Never commit real keys. The Stream **secret** and Clerk
@@ -178,6 +180,7 @@ All routes require a Clerk session and live under `/api`.
 | `GET` | `/sessions/:id/report` | Feedback report of a completed session |
 | `GET` | `/sessions/:id/report.pdf` | The feedback PDF |
 | `POST` | `/sessions/:id/report/email` | Email the PDF to the candidate (host) |
+| `POST` | `/translate` | Translate a caption (`text`, `from`, `to`) for live call subtitles |
 | `POST` | `/execute` | Run code in the sandbox and judge it (`language`, `code`, `problem` or `sessionId`) |
 | `GET` `POST` `PUT` `DELETE` | `/questions[/:id]` | The host's question bank |
 | `GET` | `/chat/token` | Get a Stream token for video and chat |

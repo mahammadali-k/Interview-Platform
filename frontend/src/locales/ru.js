@@ -427,4 +427,11 @@ export default {
   "toast.resultFail": "Не удалось обновить результат",
   "toast.emailSent": "Отзыв отправлен на {to}",
   "toast.emailFail": "Не удалось отправить письмо",
+
+  // live translation
+  "cc.title": "Живой перевод речи на ваш язык",
+  "cc.toggle": "Живой перевод",
+  "cc.speak": "Я говорю на",
+  "cc.translating": "перевод...",
+  "cc.unsupported": "Распознавание речи недоступно в этом браузере (используйте Chrome, Edge или Safari). Вы всё равно будете видеть переведённую речь собеседника.",
 };

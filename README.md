@@ -203,46 +203,42 @@ All routes require a Clerk session and live under `/api`.
 The app deploys as **one web service**: the Express server also serves the built frontend, so there
 is no CORS to configure and the API lives at the same origin (`/api`).
 
-### Render (Blueprint)
-
-1. Push the repository to GitHub.
-2. In Render: **New + > Blueprint**, pick this repository. [`render.yaml`](render.yaml) describes the service.
-3. Fill in the variables marked as secrets (they are never stored in git):
-
-   | Variable | Value |
-   | --- | --- |
-   | `CLIENT_URL` | the public URL of the service, e.g. `https://interview-platform.onrender.com` |
-   | `DB_URL` | MongoDB Atlas connection string (allow `0.0.0.0/0` in Network Access) |
-   | `CLERK_PUBLISHABLE_KEY`, `VITE_CLERK_PUBLISHABLE_KEY` | same Clerk publishable key |
-   | `CLERK_SECRET_KEY` | Clerk secret key |
-   | `STREAM_API_KEY`, `VITE_STREAM_API_KEY` | same Stream key |
-   | `STREAM_API_SECRET` | Stream secret |
-   | `INNGEST_EVENT_KEY`, `INNGEST_SIGNING_KEY` | Inngest keys |
-   | `SMTP_*`, `MAIL_FROM` | optional, for feedback emails |
-
-   `VITE_*` variables are baked into the frontend **at build time**, so changing one needs a new deploy.
-4. After the first deploy, in Clerk add the service URL to the allowed origins (use a *Production*
-   instance and `pk_live_` / `sk_live_` keys for real users), and in Inngest sync the app with
-   `https://<your-service>/api/inngest`.
-
 ### Fly.io
 
-`fly.toml` and the `Dockerfile` are in the repository root, so the **Config path** is the default
-(`fly.toml`, or leave it empty).
+`fly.toml` and the `Dockerfile` live in the repository root, so the **Config path** is the default
+(`fly.toml`, or just leave it empty).
 
 ```bash
 fly launch --no-deploy --copy-config      # keeps fly.toml; pick a free app name and update `app` / CLIENT_URL in it
 fly secrets set \
   DB_URL="..." CLERK_SECRET_KEY="..." STREAM_API_SECRET="..." \
   INNGEST_EVENT_KEY="..." INNGEST_SIGNING_KEY="..." SMTP_PASS="..."
+fly ips allocate-v4 --shared && fly ips allocate-v6   # a public address, otherwise the .fly.dev name does not resolve
 fly deploy
 ```
 
-Public values (Clerk publishable key, Stream key, URLs) are already in `fly.toml`; only the secrets
-go through `fly secrets`. After the first deploy, add `https://<app>.fly.dev` to the allowed origins
-in Clerk and sync `https://<app>.fly.dev/api/inngest` in Inngest.
+Public values (Clerk publishable key, Stream key, URLs) are already in `fly.toml` and only the
+secrets go through `fly secrets`:
 
-### Any other Node host
+| Variable | Value |
+| --- | --- |
+| `CLIENT_URL` | the public URL of the app, e.g. `https://interview-platform.fly.dev` |
+| `DB_URL` | MongoDB Atlas connection string (allow `0.0.0.0/0` in Network Access, Fly's IPs change) |
+| `CLERK_PUBLISHABLE_KEY`, `VITE_CLERK_PUBLISHABLE_KEY` | same Clerk publishable key |
+| `CLERK_SECRET_KEY` | Clerk secret key |
+| `STREAM_API_KEY`, `VITE_STREAM_API_KEY` | same Stream key |
+| `STREAM_API_SECRET` | Stream secret |
+| `INNGEST_EVENT_KEY`, `INNGEST_SIGNING_KEY` | Inngest keys |
+| `SMTP_*`, `MAIL_FROM` | optional, for feedback emails |
+
+`VITE_*` values are baked into the frontend **at build time** (`[build.args]` in `fly.toml`), so
+changing one needs a new deploy. After the first deploy, add `https://<app>.fly.dev` to the allowed
+origins in Clerk (use a *Production* instance with `pk_live_` / `sk_live_` keys for real users) and
+sync `https://<app>.fly.dev/api/inngest` in Inngest.
+
+### Any other host
+
+The `Dockerfile` works on any Docker host. Without Docker:
 
 ```bash
 npm run build   # installs both packages and builds the frontend

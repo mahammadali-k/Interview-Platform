@@ -1,4 +1,4 @@
-// localStorage can be blocked (private mode, strict settings): the app must work without it.
+// localStorage can be blocked (private mode, strict settings), and the app should still work without it.
 
 export function getStored(key) {
   try {

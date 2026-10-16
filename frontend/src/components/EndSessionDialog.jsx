@@ -4,14 +4,14 @@ import { PASS_PERCENT } from "../lib/constants";
 import { useEndSession, useSessionById, useSessionQuiz } from "../hooks/useSessions";
 
 /**
- * Host-side "end interview" flow, usable from the session page and from the live list: loads the
- * quiz progress, shows the decision dialog and opens the feedback page once the session ended.
+ * Everything the host needs to end an interview, whether they're on the session page or the live
+ * list: it loads the quiz progress, shows the decision dialog, then jumps to the feedback page.
  */
 function EndSessionDialog({ session, onClose, initialNotes = "" }) {
   const navigate = useNavigate();
   const endSession = useEndSession();
   const { data: quiz } = useSessionQuiz(session._id);
-  // list rows come without the code runs and notes, so read the full session (cached on the session page)
+  // Rows in the live list don't carry code runs or notes, so grab the full session (it's already cached on the session page)
   const { data: fullSession } = useSessionById(session._id);
 
   const questions = quiz?.questions || [];
@@ -41,7 +41,7 @@ function EndSessionDialog({ session, onClose, initialNotes = "" }) {
       }
     );
 
-  // wait for the full session so the suggestion and the prefilled notes are correct
+  // hold on until the full session is here, otherwise the suggestion and the prefilled notes would be off
   if (!fullSession) return null;
 
   return (

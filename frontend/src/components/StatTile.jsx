@@ -7,9 +7,9 @@ const TONES = {
   primary: "text-primary",
 };
 
-/** one number with a label: dashboard, history and result pages all use this */
+/** One number with a label. The dashboard, history and result pages all use it */
 function StatTile({ label, value, hint, tone, icon: Icon, live = false, className = "" }) {
-  // numbers count up from zero; text values (e.g. "12m 3s") are shown as they are
+  // numbers count up from zero; text values (like "12m 3s") are shown as they are
   const counted = useCountUp(typeof value === "number" ? value : 0);
   const shown = typeof value === "number" ? counted : value;
 

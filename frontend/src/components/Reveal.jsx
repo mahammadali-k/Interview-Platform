@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-// fades a block in the first time it scrolls into view (one observer per block, then it disconnects)
+// Fades a block in the first time it scrolls into view (one observer per block, and it disconnects right after)
 function Reveal({ children, className = "", delay = 0 }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);

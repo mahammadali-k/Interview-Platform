@@ -12,7 +12,7 @@ const SHADES = [
   "bg-primary",
 ];
 
-// GitHub-style calendar: one square per day, darker means more interviews that day
+// Like GitHub's contribution graph: one square per day, and the more interviews, the darker it gets
 function ActivityHeatmap({ dates }) {
   const { weeks, total } = useMemo(() => {
     const counts = new Map();

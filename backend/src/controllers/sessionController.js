@@ -8,7 +8,7 @@ import { quizOf, summarize } from "../services/report.js";
 import { sendFeedbackEmail } from "../services/feedbackEmail.js";
 import { loadSession, publicSession, roleOf } from "../services/sessionAccess.js";
 
-// list views never need the answer key, the candidate's answers/code or the host's notes
+// list views never need the answer key, the candidate's answers or code, or the host's notes
 const LIST_EXCLUDE = "-quiz -quizAnswers -codeRuns -hostNotes -incidents";
 
 const isValidTimeLimit = (value) => Number.isInteger(value) && value >= 0 && value <= 180;
@@ -29,10 +29,10 @@ export async function createSession(req, res) {
       return res.status(400).json({ message: "Time limit must be between 0 and 180 minutes" });
     }
 
-    // generate a unique call id for stream video
+    // every video call needs its own unique id
     const callId = `session_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
-    // the interview's questions are copied from the host's (editable) question bank
+    // the interview's questions are copied from the host's question bank (which they can edit)
     const quiz = await snapshotQuiz(userId, problem);
 
     const session = await Session.create({
@@ -44,7 +44,7 @@ export async function createSession(req, res) {
       timeLimitMinutes,
     });
 
-    // create stream video call
+    // create the Stream video call
     await streamClient.video.call("default", callId).getOrCreate({
       data: {
         created_by_id: clerkId,
@@ -52,7 +52,7 @@ export async function createSession(req, res) {
       },
     });
 
-    // chat messaging
+    // and the chat channel that goes with it
     const channel = chatClient.channel("messaging", callId, {
       name: `${problem} Session`,
       created_by_id: clerkId,
@@ -88,7 +88,7 @@ export async function getMyRecentSessions(req, res) {
   try {
     const userId = req.user._id;
 
-    // get sessions where user is either host or participant
+    // sessions where the user is the host or the candidate
     const sessions = await Session.find({
       status: "completed",
       $or: [{ host: userId }, { participant: userId }],
@@ -141,7 +141,7 @@ export async function getSessionById(req, res) {
     const data = session.toObject();
     const role = roleOf(session, req.user);
 
-    // the notes and the integrity log are the host's; people outside the interview get the public part
+    // the notes and the integrity log belong to the host; people outside the interview only get the public part
     if (role !== "host") {
       delete data.hostNotes;
       delete data.incidents;
@@ -180,7 +180,7 @@ export async function joinSession(req, res) {
       return res.status(403).json({ message: "The host removed you from this session" });
     }
 
-    // check if session is already full - has a participant
+    // someone already took the candidate seat
     if (session.participant) return res.status(409).json({ message: "Session is full" });
 
     session.participant = userId;
@@ -223,7 +223,7 @@ export async function updateSession(req, res) {
       session.problem = problem;
       session.difficulty = meta.difficulty;
       session.quiz = await snapshotQuiz(req.user._id, problem);
-      // a different problem means a fresh quiz and fresh code runs
+      // switching problems means a fresh quiz and fresh code runs
       session.quizAnswers = [];
       session.quizSubmittedAt = null;
       session.codeRuns = [];
@@ -272,7 +272,7 @@ export async function removeParticipant(req, res) {
     await session.populate("participant", "clerkId name");
     const { _id: participantId, clerkId, name } = session.participant;
 
-    // the browser of the host detected a prohibited device on the candidate's camera
+    // the host's browser spotted a prohibited device on the candidate's camera
     const { reason, device, score } = req.body || {};
 
     if (reason === "prohibited_device") {
@@ -313,11 +313,11 @@ export async function endSession(req, res) {
     });
     if (!session) return;
 
-    // delete stream video call and chat channel
+    // tear down the Stream video call and chat channel
     await streamClient.video.call("default", session.callId).delete({ hard: true });
     await chatClient.channel("messaging", session.callId).delete();
 
-    // interview outcome: tests passed + quiz threshold; only the host can overrule it
+    // work out the outcome: tests passed + the quiz threshold. Only the host can overrule the suggestion
     const { decision, notes, rating } = req.body || {};
     const isHost = role === "host";
     const quiz = gradeQuiz(quizOf(session), session.quizAnswers);
@@ -340,10 +340,10 @@ export async function endSession(req, res) {
     session.endedAt = new Date();
     await session.save();
 
-    // fire and forget: a mail problem must never block ending the interview
+    // fire and forget: a mail hiccup must never stop the interview from ending
     sendFeedbackEmail(session._id).catch((error) => console.log("Feedback email failed:", error.message));
 
-    // never send the whole document back: it holds the answer key and the host's notes
+    // don't send the whole document back, it holds the answer key and the host's notes
     res.status(200).json({ id: session._id, status: session.status, result: session.result });
   } catch (error) {
     serverError(res, "endSession", error);

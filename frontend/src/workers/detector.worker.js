@@ -1,12 +1,12 @@
-// Runs the object-detection model off the main thread, so the call UI never freezes while the
-// network is evaluated. Frames arrive as raw RGBA buffers and results go back as plain objects.
+// Runs the object-detection model off the main thread so the call UI never freezes while the
+// network thinks. Frames come in as raw RGBA buffers and results go back as plain objects.
 import * as tf from "@tensorflow/tfjs";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
 let model;
 
 async function init() {
-  // WebGL (through OffscreenCanvas) is fastest; the CPU backend is the safety net
+  // WebGL (via OffscreenCanvas) is the fastest; the CPU backend is the safety net
   let backend = "cpu";
   try {
     if (await tf.setBackend("webgl")) backend = "webgl";

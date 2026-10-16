@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
 /**
- * Shared dialog shell: backdrop, pop-in animation, Escape to close, title and an actions row.
- * `busy` locks closing while a request is running. Pass `onSubmit` to render a <form>.
+ * A shared dialog shell: backdrop, pop-in animation, Escape to close, a title and an actions row.
+ * `busy` stops people from closing it while a request is running. Pass `onSubmit` and it renders a <form>.
  */
 function Modal({ eyebrow, title, onClose, busy = false, size = "max-w-lg", onSubmit, footer, children }) {
   useEffect(() => {

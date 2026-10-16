@@ -1,6 +1,6 @@
-# Render Blueprint: one web service that serves the API and the built frontend.
-# Create it from the dashboard: New + > Blueprint > pick this repository, then fill in the
-# secrets marked "sync: false" (they are never stored in git).
+# Render Blueprint: a single web service that serves the API and the built frontend.
+# Create it from the dashboard (New + > Blueprint > pick this repo), then fill in the
+# secrets marked "sync: false". They never get stored in git.
 services:
   - type: web
     name: interview-platform
@@ -16,7 +16,7 @@ services:
       - key: NODE_VERSION
         value: "20"
 
-      # public URL of this service, e.g. https://interview-platform.onrender.com
+      # the public URL of this service, e.g. https://interview-platform.onrender.com
       - key: CLIENT_URL
         sync: false
 
@@ -48,7 +48,7 @@ services:
       - key: MAIL_FROM
         sync: false
 
-      # frontend: read at build time by Vite
+      # frontend: Vite reads these at build time
       - key: VITE_CLERK_PUBLISHABLE_KEY
         sync: false
       - key: VITE_STREAM_API_KEY

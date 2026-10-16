@@ -23,8 +23,8 @@ const WRONG_STATUS = {
 };
 
 /**
- * Loads a session and checks that the caller may act on it. When something is wrong the
- * response is sent here and `{}` is returned, so callers just `if (!session) return;`.
+ * Loads a session and checks that the caller is allowed to act on it. If something is off, the
+ * response is sent right here and `{}` comes back, so callers can simply do `if (!session) return;`.
  *
  * @param {object} options
  * @param {"host" | "participant" | "member"} [options.role]  who may do this (default: any member)

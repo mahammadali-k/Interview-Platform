@@ -11,7 +11,7 @@ const format = (totalSeconds) => {
   return `${hours > 0 ? `${hours}:` : ""}${pad(minutes)}:${pad(totalSeconds % 60)}`;
 };
 
-// isolated so the one-second tick never re-renders the whole session page
+// Lives in its own component so the one-second tick doesn't re-render the whole session page
 function ElapsedTimer({ since, limitMinutes = 0 }) {
   const [now, setNow] = useState(() => Date.now());
 
@@ -31,7 +31,7 @@ function ElapsedTimer({ since, limitMinutes = 0 }) {
     );
   }
 
-  // countdown: warns in the last five minutes and counts up in red once the limit is passed
+  // Countdown mode: turns yellow in the last 5 minutes, then red and counting up once time's over
   const remaining = limitMinutes * 60 - elapsed;
   const over = remaining < 0;
   const tone = over ? "text-error" : remaining <= 300 ? "text-warning" : "";

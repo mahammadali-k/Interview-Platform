@@ -38,7 +38,7 @@ function TipCarousel() {
         {t("tip.title", "Interview tip")}
       </p>
 
-      {/* key restarts the fade-in whenever the tip changes */}
+      {/* the key restarts the fade-in whenever the tip changes */}
       <p key={index} className="animate-rise min-h-16 text-lg leading-relaxed">
         {tips[index]}
       </p>

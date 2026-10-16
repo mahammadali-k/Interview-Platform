@@ -1,7 +1,7 @@
 import { Loader2Icon } from "lucide-react";
 import { t } from "../lib/i18n";
 
-// one loading indicator for pages, panels and suspense fallbacks
+// The one loading spinner for pages, panels and suspense fallbacks
 function Spinner({ size = "size-8", label, fullScreen = false, className = "" }) {
   const spinner = (
     <div className={`flex flex-col items-center gap-3 ${className}`} role="status">

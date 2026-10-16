@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { executeCode } from "../lib/execute";
 
-// shared "run code" state for the practice page and the live session page
+// "Run code" state shared by the practice page and the live session
 function useCodeRunner() {
   const [output, setOutput] = useState(null);
   const [isRunning, setIsRunning] = useState(false);

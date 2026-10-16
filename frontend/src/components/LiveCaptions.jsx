@@ -4,7 +4,7 @@ import { LANGUAGES, t } from "../lib/i18n";
 
 const langLabel = (code) => LANGUAGES.find((l) => l.code === code)?.short || code.toUpperCase();
 
-// what the speech recognition is doing, in words the user can act on
+// Says what speech recognition is up to, in words you can act on
 function statusOf({ enabled, muted, speech, spokenLang }) {
   if (!enabled) return null;
   if (muted) return { tone: "muted", icon: MicOffIcon, text: t("cc.status.muted", "Microphone is off: unmute to send captions") };
@@ -35,8 +35,8 @@ const TONES = {
   error: "text-error",
 };
 
-// subtitles over the video: translated text large, the original quietly underneath.
-// The caption state lives here (not in the call UI), so every caption only re-renders this block.
+// Subtitles over the video: the translation big, the original small underneath.
+// The caption state lives in here (not in the call UI), so each new caption only re-renders this little block.
 function LiveCaptions({ muted, enabled, spokenLang, ...rest }) {
   const { lines, speech } = useLiveCaptions({ muted, enabled, spokenLang, ...rest });
   const status = statusOf({ enabled, muted, speech, spokenLang });

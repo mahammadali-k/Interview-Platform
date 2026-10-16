@@ -4,7 +4,7 @@ import { ArrowRightIcon, LinkIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import { t } from "../lib/i18n";
 
-// accepts a full invite link or just the session id
+// works with a full invite link or just the session id
 const SESSION_ID = /([a-f0-9]{24})/i;
 
 function JoinByLink() {

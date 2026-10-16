@@ -6,7 +6,7 @@ import { TIME_LIMITS } from "../lib/constants";
 import { useManageSession } from "../hooks/useSessions";
 import { t } from "../lib/i18n";
 
-// host-only: change the problem or time limit of a running interview, or remove the candidate
+// Host only: swap the problem, change the time limit, or remove the candidate from a running interview
 function EditSessionModal({ session, onClose }) {
   const { update, removeCandidate } = useManageSession();
   const [problem, setProblem] = useState(session.problem);

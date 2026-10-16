@@ -3,14 +3,14 @@ import { ENV } from "./env.js";
 
 let transporter;
 
-// a host with a username but no password would only fail at send time, so treat it as disabled
+// a host with a username but no password would only fail at send time, so we treat that as "disabled"
 export const isMailConfigured = () => Boolean(ENV.SMTP_HOST && (!ENV.SMTP_USER || ENV.SMTP_PASS));
 
 function getTransporter() {
   transporter ??= nodemailer.createTransport({
     host: ENV.SMTP_HOST,
     port: ENV.SMTP_PORT,
-    secure: ENV.SMTP_SECURE, // true for 465, false for 587 (STARTTLS)
+    secure: ENV.SMTP_SECURE, // true for port 465, false for 587 (STARTTLS)
     auth: ENV.SMTP_USER ? { user: ENV.SMTP_USER, pass: ENV.SMTP_PASS } : undefined,
   });
 

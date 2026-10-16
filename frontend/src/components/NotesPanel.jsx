@@ -8,7 +8,7 @@ const getStatus = () => ({
   error: { icon: CloudOffIcon, text: t("notes.error", "Could not save"), className: "text-error" },
 });
 
-// the interviewer's private scratchpad, autosaved to the server
+// The interviewer's private scratchpad, saved to the server as you type
 function NotesPanel({ value, status, onChange }) {
   const state = getStatus()[status];
 

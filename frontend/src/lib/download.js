@@ -1,7 +1,7 @@
 import { sessionApi } from "../api/sessions";
 import { saveBlob, slugify } from "./files";
 
-// downloads the feedback PDF that the server generates
+// Downloads the feedback PDF the server generates
 export async function downloadReportPdf(sessionId, problem = "interview") {
   const blob = await sessionApi.downloadReport(sessionId);
 

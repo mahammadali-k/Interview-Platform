@@ -1,4 +1,4 @@
-// stacked bars without a chart library: one column per bucket, `accepted` on top of `rejected`
+// A tiny stacked bar chart, no chart library needed. Accepted sits on top of not accepted
 import { t } from "../lib/i18n";
 
 function BarChart({ data, height = 120 }) {

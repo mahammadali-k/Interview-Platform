@@ -8,10 +8,10 @@ const INTERIM_THROTTLE_MS = 400;
 const SEEN_LIMIT = 80;
 
 /**
- * Live translated captions for a call. Every participant transcribes their own microphone and
- * shares only the text; the receiving side translates it into the page language and shows it as
- * subtitles. Captions travel over BOTH the chat channel and the call's custom events (the first
- * one that works wins, duplicates are dropped), and the speaker also sees their own words.
+ * Live translated captions for a call. Everybody transcribes their own mic and shares only the text;
+ * the other side translates it into their page language and shows it as subtitles.
+ * Captions go over BOTH the chat channel and the call's custom events (whichever arrives first wins,
+ * duplicates are dropped), and you get to see your own words too.
  *
  * @param {object} options
  * @param {object | null} options.channel   Stream chat channel of the session
@@ -52,7 +52,7 @@ function useLiveCaptions({ channel, call, userId, enabled, muted, spokenLang, ta
     });
   }, []);
 
-  // ---- send my own speech (and echo it locally so it is visible that recognition works) ----
+  // ---- send my own speech (and echo it locally, so you can see recognition working) ----
   const handleSpeech = useCallback(
     ({ text, final }) => {
       const id = utterance.current;
@@ -80,14 +80,14 @@ function useLiveCaptions({ channel, call, userId, enabled, muted, spokenLang, ta
     onText: handleSpeech,
   });
 
-  // ---- show what the other side says ----
+  // ---- show what the other person says ----
   useEffect(() => {
     if (!enabled || (!channel && !call)) return;
 
     const receive = async ({ speakerId, speaker, id, text, lang, final }) => {
       if (!text || speakerId === userId) return;
 
-      // the same caption can arrive through both transports
+      // the same caption can show up through both channels, so skip repeats
       const signature = `${speakerId}:${id}:${final}:${text}`;
       if (seen.current.has(signature)) return;
       seen.current.add(signature);
@@ -95,7 +95,7 @@ function useLiveCaptions({ channel, call, userId, enabled, muted, spokenLang, ta
 
       const key = `${speakerId}:${id}`;
 
-      // interim text is shown as spoken; only finished sentences are translated
+      // interim text is shown as it's spoken; only finished sentences get translated
       upsert(key, { speaker, original: text, lang, final, text, translating: false, failed: false });
       expire(key);
 

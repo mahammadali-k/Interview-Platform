@@ -3,7 +3,7 @@ import { CheckIcon, LinkIcon } from "lucide-react";
 import { copyText } from "../lib/clipboard";
 import { t } from "../lib/i18n";
 
-// copies the direct link of a session so the candidate can be invited in one click
+// One click copies the session link, ready to send to the candidate
 function CopyInviteButton({ sessionId, className = "btn btn-ghost btn-sm gap-2", label }) {
   const [copied, setCopied] = useState(false);
 

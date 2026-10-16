@@ -4,9 +4,8 @@ import { t } from "../lib/i18n";
 import { deviceLabel } from "../lib/devices";
 
 /**
- * Error alert shown when a prohibited device was detected. `deadline` is when the candidate will
- * be removed. The host can cancel (false alarm) or remove right away; the candidate only sees
- * the notice.
+ * The alert people see when a prohibited device shows up. `deadline` is when the candidate gets
+ * removed. The host can cancel (false alarm) or remove right away; the candidate just sees the notice.
  */
 function ProctorAlert({ device, deadline, isHost, onCancel, onRemoveNow }) {
   const [now, setNow] = useState(() => Date.now());
@@ -22,7 +21,7 @@ function ProctorAlert({ device, deadline, isHost, onCancel, onRemoveNow }) {
     ? t("proctor.hostText", "A {device} was detected on the candidate's camera. The candidate will be removed from the interview in {n}s.", { device: deviceLabel(device), n: seconds })
     : t("proctor.candText", "A {device} was detected on your camera. Using devices is not allowed in this interview and you will be removed in {n}s.", { device: deviceLabel(device), n: seconds });
 
-  // host: a compact banner, so the red box on the candidate's video stays visible underneath
+  // Host: a slim banner, so the red box on the candidate's video stays visible underneath
   if (isHost) {
     return (
       <div
@@ -50,7 +49,7 @@ function ProctorAlert({ device, deadline, isHost, onCancel, onRemoveNow }) {
     );
   }
 
-  // candidate: a blocking error notice
+  // Candidate: a notice that covers the video until they're removed
   return (
     <div
       role="alertdialog"

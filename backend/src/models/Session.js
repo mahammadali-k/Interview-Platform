@@ -26,14 +26,14 @@ const sessionSchema = new mongoose.Schema(
       enum: ["active", "completed"],
       default: "active",
     },
-    // stream video call ID
+    // Stream video call id
     callId: {
       type: String,
       default: "",
     },
-    // optional time limit in minutes (0 = none); shown as a countdown, never ends the session
+    // optional time limit in minutes (0 = none): shown as a countdown, it never ends the session
     timeLimitMinutes: { type: Number, default: 0, min: 0, max: 180 },
-    // device detection (phones, laptops...) on the candidate's camera; announced to the candidate
+    // device detection (phones, laptops...) on the candidate's camera; the candidate is told it's on
     proctoring: { type: Boolean, default: true },
     // integrity incidents, e.g. a prohibited device that got the candidate removed
     incidents: {
@@ -51,12 +51,12 @@ const sessionSchema = new mongoose.Schema(
     },
     // the interviewer's private notes, saved while the interview runs
     hostNotes: { type: String, default: "", maxlength: 5000 },
-    // when the candidate joined / the interview ended (used for time spent)
+    // when the candidate joined and when the interview ended (used for the time spent)
     joinedAt: { type: Date, default: null },
     endedAt: { type: Date, default: null },
-    // candidates the host removed; they cannot join again
+    // candidates the host removed; they can't join again
     removed: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    // questions asked in this interview, copied from the host's bank when the session starts
+    // the questions asked in this interview, copied from the host's bank when the session starts
     quiz: {
       type: [
         {
@@ -70,7 +70,7 @@ const sessionSchema = new mongoose.Schema(
       ],
       default: [],
     },
-    // candidate's quiz submission (answer key is kept on the server in data/quiz.js)
+    // the candidate's quiz answers (the answer key stays on the server, in data/quiz.js)
     quizAnswers: {
       type: [{ _id: false, questionId: String, selected: Number }],
       default: [],
@@ -79,7 +79,7 @@ const sessionSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    // every "Run code" made by the candidate (capped in the controller)
+    // every "Run code" the candidate did (capped in the controller)
     codeRuns: {
       type: [
         {
@@ -92,7 +92,7 @@ const sessionSchema = new mongoose.Schema(
       ],
       default: [],
     },
-    // final interview outcome, set when the host ends the session
+    // the final outcome, set when the interview ends
     result: {
       type: new mongoose.Schema(
         {
@@ -110,7 +110,7 @@ const sessionSchema = new mongoose.Schema(
       ),
       default: null,
     },
-    // feedback email delivery status
+    // whether the feedback email went out
     email: {
       type: new mongoose.Schema(
         { sentAt: Date, to: String, error: String },

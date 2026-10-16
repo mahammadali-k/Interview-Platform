@@ -64,9 +64,9 @@ function useStreamClient(session, loadingSession, isHost, isParticipant) {
 
     if (session && !loadingSession) initCall();
 
-    // cleanup - performance reasons
+    // clean up when the effect re-runs or the component unmounts
     return () => {
-      // iife
+      // async wrapper, because React doesn't allow async effect cleanups
       (async () => {
         try {
           if (videoCall) await videoCall.leave();

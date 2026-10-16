@@ -6,7 +6,7 @@ const HOLD_MS = 1500;
 
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// types a phrase, holds it, erases it and moves on to the next one
+// Types a phrase, holds it for a moment, erases it, then moves on to the next one
 function Typewriter({ phrases }) {
   const [index, setIndex] = useState(0);
   const [text, setText] = useState(() => (reducedMotion() ? phrases[0] : ""));

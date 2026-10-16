@@ -3,7 +3,7 @@ import { RotateCcwIcon, TriangleAlertIcon } from "lucide-react";
 import IconTile from "./IconTile";
 import { t } from "../lib/i18n";
 
-// a render error in one page must not leave a blank screen
+// If a page crashes, show something friendly instead of a blank screen
 class ErrorBoundary extends Component {
   state = { error: null };
 

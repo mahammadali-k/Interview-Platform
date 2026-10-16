@@ -2,18 +2,18 @@ import { useEffect, useRef, useState } from "react";
 
 const Recognition = typeof window !== "undefined" ? window.SpeechRecognition || window.webkitSpeechRecognition : null;
 
-// locale the browser's speech service expects for each interface language
+// the locale the browser's speech service wants for each interface language
 const SPEECH_LOCALES = { en: "en-US", az: "az-AZ", ru: "ru-RU" };
 
 export const isSpeechRecognitionSupported = Boolean(Recognition);
 
-// recognition errors that retrying can not fix
+// errors where retrying would never help
 const FATAL_ERRORS = new Set(["not-allowed", "service-not-allowed", "language-not-supported", "audio-capture"]);
 
 /**
- * Transcribes the local microphone with the browser's built-in speech recognition.
- * `onText({ text, final })` fires for interim and final results. Recognition restarts itself
- * after the silence timeouts that Chrome enforces, and stops while `enabled` is false.
+ * Turns the local microphone into text with the browser's built-in speech recognition.
+ * `onText({ text, final })` fires for interim and final results. It restarts itself after the
+ * silence timeouts Chrome enforces, and stops while `enabled` is false.
  *
  * @returns {{ state: "off" | "starting" | "listening" | "error", reason?: string }}
  */
@@ -54,7 +54,7 @@ function useSpeechRecognition({ enabled, lang, onText }) {
     };
 
     recognition.onerror = (event) => {
-      // "no-speech" and "aborted" are normal; the rest is worth telling the user about
+      // "no-speech" and "aborted" are normal; anything else is worth telling the user about
       if (event.error === "no-speech" || event.error === "aborted") return;
 
       console.warn("Speech recognition error:", event.error);
@@ -68,7 +68,7 @@ function useSpeechRecognition({ enabled, lang, onText }) {
       try {
         recognition.start();
       } catch {
-        // already started
+        // already started, nothing to do
       }
     };
 

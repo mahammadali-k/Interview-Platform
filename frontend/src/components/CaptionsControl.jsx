@@ -2,7 +2,7 @@ import { CaptionsIcon, CaptionsOffIcon, InfoIcon } from "lucide-react";
 import { LANGUAGES, t } from "../lib/i18n";
 import { isSpeechRecognitionSupported } from "../hooks/useSpeechRecognition";
 
-// toggle for live translation + the language the local user speaks
+// The live translation switch, plus a picker for the language you speak
 function CaptionsControl({ enabled, onToggle, spokenLang, onSpokenLangChange }) {
   const Icon = enabled ? CaptionsIcon : CaptionsOffIcon;
 

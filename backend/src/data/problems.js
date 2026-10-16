@@ -1,5 +1,5 @@
-// Server-side truth for judging submissions: the candidate never decides whether tests passed.
-// Keys are problem titles (what a session stores).
+// The server's source of truth for judging submissions: the candidate never gets to decide whether
+// the tests passed. Keys are problem titles (that's what a session stores).
 
 export const PROBLEMS = {
   "Two Sum": {
@@ -46,7 +46,7 @@ export const PROBLEMS = {
 
 export const PROBLEM_TITLES = Object.keys(PROBLEMS);
 
-// normalize output for comparison (trim whitespace, handle different spacing)
+// normalize the output before comparing (trim whitespace, ignore spacing differences)
 const normalize = (output) =>
   String(output)
     .trim()

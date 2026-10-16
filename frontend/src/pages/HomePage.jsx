@@ -68,7 +68,7 @@ const getSteps = () => [
 ];
 
 function SignInCta({ children, className = "btn btn-primary" }) {
-  // an invite link sends visitors here with ?redirect=/session/<id>
+  // invite links bring people here with ?redirect=/session/<id>
   const [params] = useSearchParams();
   const redirect = params.get("redirect");
   const target = redirect?.startsWith("/") && !redirect.startsWith("//") ? redirect : undefined;
@@ -104,7 +104,7 @@ function HomePage() {
         </div>
       </header>
 
-      {/* HERO */}
+      {/* Hero */}
       <section className="relative isolate overflow-hidden">
         <AuroraBackground />
         <div className="hero-backdrop pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
@@ -178,7 +178,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* FEATURES (bento) */}
+      {/* Features (bento grid) */}
       <section id="features" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20">
         <div className="mb-12 max-w-2xl">
           <p className="eyebrow mb-3">{t("landing.cap.eyebrow", "Capabilities")}</p>
@@ -198,7 +198,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
+      {/* How it works */}
       <section id="how-it-works" className="scroll-mt-20 border-y hairline bg-base-100">
         <div className="mx-auto max-w-7xl px-4 py-20">
           <div className="mb-12 max-w-2xl">
@@ -221,7 +221,7 @@ function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Call to action */}
       <section className="mx-auto max-w-7xl px-4 py-20">
         <div className="relative isolate overflow-hidden rounded-3xl border hairline bg-base-100 px-8 py-14 text-center">
           <AuroraBackground />

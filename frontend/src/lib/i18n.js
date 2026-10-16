@@ -2,10 +2,10 @@ import { useSyncExternalStore } from "react";
 import { getStored, setStored } from "./storage";
 
 /**
- * Tiny i18n layer: English text lives next to the code as the default,
- * `t("area.key", "English text", { vars })` looks the key up in the selected language and falls
- * back to the English text. `useLang()` is called once in <App/>, so the whole tree re-renders
- * when the language changes and every component can simply import `t`.
+ * A tiny i18n layer: the English text sits right next to the code as the default.
+ * `t("area.key", "English text", { vars })` looks the key up in the selected language and falls back
+ * to the English text. `useLang()` is called once in <App/>, so the whole tree re-renders when the
+ * language changes and every component can just import `t`.
  */
 
 export const LANGUAGES = [
@@ -14,7 +14,7 @@ export const LANGUAGES = [
   { code: "ru", label: "Русский", short: "RU" },
 ];
 
-// dictionaries of the other languages are separate chunks, loaded only when they are needed
+// the other languages' dictionaries are separate chunks, loaded only when needed
 const LOADERS = {
   az: () => import("../locales/az"),
   ru: () => import("../locales/ru"),
@@ -38,7 +38,7 @@ async function ensureDictionary(code) {
   if (code !== "en" && !DICTIONARIES[code]) DICTIONARIES[code] = (await LOADERS[code]()).default;
 }
 
-/** loads the dictionary of the saved language: await it before the first render */
+/** Loads the saved language's dictionary: await it before the first render */
 export const initLang = () => ensureDictionary(current).catch(() => {});
 
 export async function setLang(code) {
@@ -47,7 +47,7 @@ export async function setLang(code) {
   try {
     await ensureDictionary(code);
   } catch {
-    return; // the chunk could not be loaded: stay on the current language
+    return; // couldn't load the chunk, so stay on the current language
   }
 
   current = code;

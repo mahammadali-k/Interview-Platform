@@ -1,4 +1,4 @@
-# One image that serves the API and the built frontend (used by Fly.io; works on any Docker host).
+# One image for the API and the built frontend (Fly.io uses it, and any Docker host will do).
 
 # ---- build the frontend ----
 FROM node:20-alpine AS build
@@ -9,7 +9,7 @@ RUN npm ci --prefix frontend
 
 COPY frontend frontend
 
-# Vite reads these at build time (they are public values, not secrets)
+# Vite reads these at build time (they're public values, not secrets)
 ARG VITE_API_URL=/api
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ARG VITE_STREAM_API_KEY
@@ -30,7 +30,7 @@ RUN npm ci --omit=dev --prefix backend
 COPY backend backend
 COPY --from=build /app/frontend/dist frontend/dist
 
-# server.js resolves ../frontend/dist from the working directory
+# server.js looks for ../frontend/dist relative to the working directory
 WORKDIR /app/backend
 EXPOSE 3000
 CMD ["node", "src/server.js"]

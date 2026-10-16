@@ -61,7 +61,7 @@ function SortableTh({ label, field, sort, onSort }) {
   );
 }
 
-// interviews per week, split into accepted / not accepted (oldest first)
+// Interviews per week, split into accepted / not accepted (oldest first)
 function weeklyBuckets(interviews) {
   const thisWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
 
@@ -81,7 +81,7 @@ function weeklyBuckets(interviews) {
   });
 }
 
-// every finished interview with time spent, quiz right/wrong counts and the code result
+// Every finished interview: time spent, quiz right/wrong counts and the code result
 function HistoryPage() {
   const { data, isLoading } = useHistory();
   const [role, setRole] = useState("all");
@@ -123,7 +123,7 @@ function HistoryPage() {
 
   const chart = useMemo(() => weeklyBuckets(filtered), [filtered]);
 
-  // any filter change returns to the first page
+  // changing any filter sends you back to page one
   const withReset = (setter) => (value) => {
     setter(value);
     setPage(0);
@@ -199,7 +199,7 @@ function HistoryPage() {
           />
         </div>
 
-        {/* ACTIVITY */}
+        {/* Activity chart */}
         <section className="panel mb-6 p-5">
           <div className="mb-4 flex items-center justify-between">
             <p className="eyebrow">{t("hist.perWeek", "Interviews per week")}</p>
@@ -215,7 +215,7 @@ function HistoryPage() {
           <BarChart data={chart} />
         </section>
 
-        {/* FILTERS */}
+        {/* Filters */}
         <div className="panel mb-4 flex flex-wrap items-center gap-3 p-3">
           <label className="input input-bordered flex min-w-60 flex-1 items-center gap-2">
             <SearchIcon className="size-4 text-base-content/50" />
@@ -248,7 +248,7 @@ function HistoryPage() {
           </select>
         </div>
 
-        {/* TABLE */}
+        {/* The table */}
         <div className="panel animate-rise overflow-x-auto">
           {isLoading ? (
             <div className="space-y-2 p-4">
@@ -344,7 +344,7 @@ function HistoryPage() {
           )}
         </div>
 
-        {/* PAGINATION */}
+        {/* Pagination */}
         {filtered.length > PAGE_SIZE && (
           <div className="mt-4 flex items-center justify-between text-sm text-base-content/60">
             <span>

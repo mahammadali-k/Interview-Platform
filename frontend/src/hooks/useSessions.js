@@ -17,7 +17,7 @@ export const useActiveSessions = () =>
   useQuery({
     queryKey: ["activeSessions"],
     queryFn: sessionApi.getActiveSessions,
-    refetchInterval: 10000, // keep live sessions fresh on the dashboard
+    refetchInterval: 10000, // keep the live sessions fresh on the dashboard
   });
 
 export const useMyRecentSessions = () =>
@@ -30,7 +30,7 @@ export const useSessionById = (id) =>
     queryKey: ["session", id],
     queryFn: () => sessionApi.getSessionById(id),
     enabled: !!id,
-    refetchInterval: 5000, // refetch every 5 seconds to detect session status changes
+    refetchInterval: 5000, // poll every 5 seconds so we notice when the session status changes
   });
 
 export const useJoinSession = () =>
@@ -49,7 +49,7 @@ export const useEndSession = () =>
     onError: (error) => toast.error(errorMessage(error, t("toast.endFail", "Failed to end session"))),
   });
 
-// host actions on a running session (edit problem, remove candidate)
+// what the host can do to a running session (change the problem, remove the candidate)
 export const useManageSession = () => {
   const queryClient = useQueryClient();
 
@@ -104,7 +104,7 @@ export const useSubmitQuiz = () => {
   });
 };
 
-// add / edit / delete a question of the running interview (host)
+// add / edit / delete a question of the running interview (host only)
 export const useSessionQuestions = () => {
   const queryClient = useQueryClient();
   const refresh = (_, { id }) => queryClient.invalidateQueries({ queryKey: ["quiz", id] });

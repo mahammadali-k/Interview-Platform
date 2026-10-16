@@ -2,7 +2,7 @@ import { clerkClient } from "@clerk/express";
 import User from "../models/User.js";
 import { upsertStreamUser } from "../lib/stream.js";
 
-// clerkMiddleware (server.js) has already parsed the session; an API must answer 401, not redirect
+// clerkMiddleware (in server.js) already parsed the session. For an API we answer 401, not a redirect
 export const protectRoute = [
   async (req, res, next) => {
     try {
@@ -10,10 +10,10 @@ export const protectRoute = [
 
       if (!clerkId) return res.status(401).json({ message: "Unauthorized - please sign in" });
 
-      // find user in db by clerk ID
+      // look the user up by their Clerk id
       let user = await User.findOne({ clerkId });
 
-      // local dev: the Clerk -> Inngest webhook can't reach localhost, so create the user on first request
+      // local dev: the Clerk -> Inngest webhook can't reach localhost, so we create the user on their first request
       if (!user) {
         const clerkUser = await clerkClient.users.getUser(clerkId);
 
@@ -31,7 +31,7 @@ export const protectRoute = [
         });
       }
 
-      // attach user to req
+      // make the user available to the next handlers
       req.user = user;
 
       next();

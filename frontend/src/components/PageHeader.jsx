@@ -1,4 +1,4 @@
-// eyebrow + title + description with an optional actions slot (used by every inner page)
+// Eyebrow, title, description and an optional actions slot. Every inner page uses this
 function PageHeader({ eyebrow, title, description, actions }) {
   return (
     <header className="animate-rise mb-8 flex flex-wrap items-end justify-between gap-4">

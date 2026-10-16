@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import { useCreateSession } from "./useSessions";
 
-// creates a live session for a problem and opens it
+// Creates a live session for a problem and opens it
 function useStartInterview() {
   const navigate = useNavigate();
   const createSession = useCreateSession();

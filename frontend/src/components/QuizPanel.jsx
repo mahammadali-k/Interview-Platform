@@ -28,10 +28,10 @@ function Option({ letter, text, state, onClick, disabled }) {
 }
 
 /**
- * candidate: answers the questions (partial submission is allowed).
- * host: sees the answer key and the candidate's progress, and can add / edit / delete questions.
+ * Candidate: answers the questions (sending only some of them is fine).
+ * Host: sees the answer key and how the candidate is doing, and can add, edit or delete questions.
  *
- * `draft` is owned by the page so that "Submit & finish" can send the same answers.
+ * `draft` lives in the page so that "Submit & finish" can send the very same answers.
  */
 function QuizPanel({
   quiz,

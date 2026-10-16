@@ -16,7 +16,7 @@ function Row({ label, value, ok }) {
   );
 }
 
-// host-only: review the candidate's progress, make the final call and add notes
+// Host only: look at how the candidate did, make the final call and leave a note
 function EndSessionModal({ onClose, onConfirm, isEnding, summary, initialNotes = "" }) {
   const [decision, setDecision] = useState(null);
   const [notes, setNotes] = useState(initialNotes);

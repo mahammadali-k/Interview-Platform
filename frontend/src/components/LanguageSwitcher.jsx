@@ -1,7 +1,7 @@
 import { CheckIcon, GlobeIcon } from "lucide-react";
 import { LANGUAGES, setLang, t, useLang } from "../lib/i18n";
 
-// AZ / EN / RU dropdown (daisyUI dropdown works with focus, so no extra state is needed)
+// AZ / EN / RU dropdown. daisyUI's dropdown runs off focus, so it needs no state of its own
 function LanguageSwitcher() {
   const { lang } = useLang();
   const active = LANGUAGES.find((l) => l.code === lang);

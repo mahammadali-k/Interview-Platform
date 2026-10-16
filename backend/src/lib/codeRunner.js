@@ -1,6 +1,6 @@
 import { ENV } from "./env.js";
 
-// Candidate code is executed by a remote sandbox (Judge0 or Piston), never on this server.
+// Candidate code runs in a remote sandbox (Judge0 or Piston), never on this server.
 
 const JUDGE0_LANGUAGE_IDS = { javascript: 93, python: 92, java: 62 };
 const PISTON_LANGUAGES = {
@@ -14,7 +14,7 @@ export const SUPPORTED_LANGUAGES = Object.keys(JUDGE0_LANGUAGE_IDS);
 const TIMEOUT_MS = 25000;
 const decode = (value) => (value ? Buffer.from(value, "base64").toString("utf8") : "");
 
-// the sandbox compiles Java as Main.java, so the class that owns main() has to be called Main
+// the sandbox compiles Java as Main.java, so the class that holds main() has to be named Main
 function prepareJava(code) {
   const mainIndex = code.search(/static\s+void\s+main\s*\(/);
   if (mainIndex === -1) return code;

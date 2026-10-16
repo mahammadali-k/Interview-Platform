@@ -6,7 +6,7 @@ const getOptions = () => [
   { value: "rejected", label: t("decision.reject", "Reject"), icon: XCircleIcon, active: "border-error bg-error/10 text-error" },
 ];
 
-// Accept / Reject toggle shared by the "end interview" dialog and the result editor
+// Accept / Reject toggle, shared by the "end interview" dialog and the result editor
 function DecisionPicker({ value, onChange, suggested }) {
   return (
     <div className="grid grid-cols-2 gap-3" role="radiogroup" aria-label={t("decision.label", "Decision")}>

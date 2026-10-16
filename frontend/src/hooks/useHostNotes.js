@@ -4,8 +4,8 @@ import { sessionApi } from "../api/sessions";
 const SAVE_DELAY_MS = 800;
 
 /**
- * The interviewer's private notes: loaded once from the session, autosaved (debounced) to the
- * server so they follow the host across devices.
+ * The interviewer's private notes: loaded once from the session, then autosaved (debounced) to the
+ * server so they follow the host from device to device.
  * @param {string} sessionId
  * @param {string | undefined} savedNotes  `hostNotes` of the polled session (host only)
  */
@@ -15,7 +15,7 @@ function useHostNotes(sessionId, savedNotes) {
   const loaded = useRef(false);
   const timer = useRef(null);
 
-  // adopt the server copy once; later polls must not overwrite what is being typed
+  // take the server's copy once; later polls mustn't overwrite what the host is typing
   useEffect(() => {
     if (loaded.current || savedNotes === undefined) return;
 

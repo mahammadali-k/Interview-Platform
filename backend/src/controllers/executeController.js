@@ -7,7 +7,7 @@ import { roleOf } from "../services/sessionAccess.js";
 const MAX_CODE_LENGTH = 20000;
 const MAX_RUNS_KEPT = 30;
 
-// small per-user limiter so the shared sandbox cannot be flooded
+// a small per-user limit, so nobody can flood the shared sandbox
 const WINDOW_MS = 60_000;
 const MAX_PER_WINDOW = 15;
 const hits = new Map();
@@ -23,8 +23,8 @@ function isRateLimited(userId) {
 }
 
 // POST /execute   body: { language, code, problem?, sessionId? }
-// Runs the code in the sandbox and judges it on the server. When it is the candidate's run in an
-// active session, the result is stored, so the outcome cannot be faked from the browser.
+// Runs the code in the sandbox and judges it right here on the server. When it's the candidate's run
+// in an active session we store the result, so nobody can fake an outcome from the browser.
 export async function executeCode(req, res) {
   try {
     const { language, code, problem, sessionId } = req.body || {};

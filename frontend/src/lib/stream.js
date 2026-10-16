@@ -5,7 +5,7 @@ const apiKey = import.meta.env.VITE_STREAM_API_KEY;
 let client = null;
 
 export const initializeStreamClient = async (user, token) => {
-  // if client exists with same user instead of creating again return it
+  // reuse the existing client if it's already connected as the same user
 
   if (client && client?.user?.id === user.id) return client;
 

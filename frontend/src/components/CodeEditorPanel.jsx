@@ -37,7 +37,7 @@ function CodeEditorPanel({
   const theme = useTheme();
   const [fontSize, setFontSize] = useState(15);
 
-  // the Monaco shortcut is registered once, so it reads the latest handler through a ref
+  // Monaco registers the shortcut only once, so read the latest handler through a ref (a plain closure would go stale)
   const runRef = useRef({ run: onRunCode, isRunning });
   useEffect(() => {
     runRef.current = { run: onRunCode, isRunning };

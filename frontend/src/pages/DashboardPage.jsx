@@ -28,7 +28,7 @@ function DashboardPage() {
   const { data: activeSessionsData, isLoading: loadingActiveSessions } = useActiveSessions();
   const { data: recentSessionsData, isLoading: loadingRecentSessions } = useMyRecentSessions();
 
-  // the command palette links to /dashboard?new=1
+  // the command palette sends people to /dashboard?new=1
   useEffect(() => {
     if (params.get("new") === "1") {
       setShowCreateModal(true);
@@ -92,7 +92,7 @@ function DashboardPage() {
 
       {editingSession && (
         <EditSessionModal
-          // the list keeps refreshing, so show the latest copy of the session being edited
+          // the list keeps refreshing, so show the freshest copy of the session being edited
           session={activeSessions.find((s) => s._id === editingSession._id) || editingSession}
           onClose={() => setEditingSession(null)}
         />

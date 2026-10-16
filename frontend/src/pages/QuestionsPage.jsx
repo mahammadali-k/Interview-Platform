@@ -13,12 +13,12 @@ const GENERAL = "*";
 
 const problemLabel = (problem) => (problem === GENERAL ? t("qb.general", "General (every problem)") : problem);
 
-// the host's question bank: every new interview copies the questions of its problem
+// The host's question bank: every new interview copies the questions of its problem
 function QuestionsPage() {
   const bank = useQuestionBank();
   const [filter, setFilter] = useState("all");
-  const [editing, setEditing] = useState(undefined); // undefined: closed, null: new
-  const [template, setTemplate] = useState(null); // prefill for "duplicate"
+  const [editing, setEditing] = useState(undefined); // undefined: closed, null: adding a new one
+  const [template, setTemplate] = useState(null); // pre-fills the form when duplicating
 
   const problems = bank.data?.problems || [];
   const questions = useMemo(() => bank.data?.questions || [], [bank.data]);
@@ -71,7 +71,7 @@ function QuestionsPage() {
           }
         />
 
-        {/* FILTER */}
+        {/* Filter */}
         <div className="mb-4 flex flex-wrap gap-2">
           {[{ value: "all", label: t("prob.all", "All") }, ...problemOptions].map(({ value, label }) => {
             const count = value === "all" ? questions.length : questions.filter((q) => q.problem === value).length;
@@ -92,7 +92,7 @@ function QuestionsPage() {
           })}
         </div>
 
-        {/* LIST */}
+        {/* The list */}
         {bank.isLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }, (_, i) => (

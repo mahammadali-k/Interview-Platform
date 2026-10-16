@@ -5,5 +5,5 @@ import { getLang } from "./i18n";
 
 const LOCALES = { en: enUS, az, ru };
 
-/** date-fns locale of the selected language (call it at render time) */
+/** The date-fns locale for the selected language (call it while rendering) */
 export const dateLocale = () => LOCALES[getLang()] || enUS;

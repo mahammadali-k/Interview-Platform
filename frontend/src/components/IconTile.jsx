@@ -10,7 +10,7 @@ const SIZES = {
   lg: "size-14 rounded-xl [&>svg]:size-7",
 };
 
-/** the rounded icon square used on cards, rows and empty states */
+/** The little rounded icon square you see on cards, rows and empty states */
 function IconTile({ icon: Icon, tone = "primary", size = "md", className = "" }) {
   return (
     <span className={`grid shrink-0 place-items-center ${TONES[tone]} ${SIZES[size]} ${className}`}>

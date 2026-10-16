@@ -27,7 +27,7 @@ function Person({ icon: Icon, role, name, isYou, status, tone, muted }) {
   );
 }
 
-// who is in the room and where the interview stands, derived from the polled session
+// Who's in the room and how the interview is going, worked out from the polled session
 function SessionStatusBar({ session, userId }) {
   const { host, participant, status, quizSubmittedAt } = session;
   const completed = status === "completed";

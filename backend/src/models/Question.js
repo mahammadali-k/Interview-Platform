@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-// A host's editable quiz question. problem is a problem title, or "*" for every problem.
+// A host's editable quiz question. `problem` is a problem title, or "*" for every problem.
 const questionSchema = new mongoose.Schema(
   {
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
@@ -12,7 +12,7 @@ const questionSchema = new mongoose.Schema(
     },
     answer: { type: Number, required: true, min: 0 },
     explanation: { type: String, default: "", trim: true, maxlength: 500 },
-    // set for the copies created from the built-in defaults (prevents double seeding)
+    // only set on copies made from the built-in defaults (stops them from being seeded twice)
     seedKey: { type: String },
   },
   { timestamps: true }

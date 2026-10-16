@@ -4,17 +4,17 @@ import toast from "react-hot-toast";
 import { useManageSession } from "./useSessions";
 import { t } from "../lib/i18n";
 
-const GRACE_MS = 3000; // how long the alert is shown before the candidate is removed
-const COOLDOWN_MS = 30000; // after "false alarm" the host is not alerted again for a while
+const GRACE_MS = 3000; // how long the alert stays up before the candidate is removed
+const COOLDOWN_MS = 30000; // after a "false alarm", leave the host alone for a while
 
 /**
  * Device detection for a live interview.
  *
- * Host: the overlay analyses the candidate's camera and calls `handleViolation`; the host can also
- *       `report` a device by hand (earphones, anything the model can not see). An alert is shown to
- *       both sides and, after a short countdown, the candidate is removed (the host can cancel a
- *       false alarm). Alerts travel over the session's chat channel.
- * Candidate: only shows the alert and leaves when the countdown ends.
+ * Host: the overlay watches the candidate's camera and calls `handleViolation`; the host can also
+ *       `report` a device by hand (earphones, anything the model can't see). Both sides see an alert
+ *       and, after a short countdown, the candidate is removed (the host can cancel a false alarm).
+ *       Alerts travel over the session's chat channel.
+ * Candidate: just shows the alert and leaves when the countdown ends.
  */
 function useProctoring({ channel, userId, isHost, sessionId }) {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ function useProctoring({ channel, userId, isHost, sessionId }) {
     setAlert(null);
   }, [channel]);
 
-  // host: tell the candidate, then remove them when the countdown ends
+  // host: tell the candidate, then remove them once the countdown runs out
   useEffect(() => {
     if (!isHost || !alert) return;
 
@@ -57,7 +57,7 @@ function useProctoring({ channel, userId, isHost, sessionId }) {
     return () => clearTimeout(timer);
   }, [isHost, alert, channel, removeNow]);
 
-  // candidate: show what the host's browser reported
+  // candidate: show whatever the host's browser reported
   useEffect(() => {
     if (isHost || !channel) return;
 
@@ -74,7 +74,7 @@ function useProctoring({ channel, userId, isHost, sessionId }) {
     return () => subscription.unsubscribe();
   }, [isHost, channel, userId]);
 
-  // candidate: leave the room when the countdown is over (the server removes them as well)
+  // candidate: leave the room when the countdown is over (the server removes them too)
   useEffect(() => {
     if (isHost || !alert) return;
 
@@ -82,7 +82,7 @@ function useProctoring({ channel, userId, isHost, sessionId }) {
     return () => clearTimeout(timer);
   }, [isHost, alert, navigate]);
 
-  // the host spots something the model can not: earphones, a second screen...
+  // the host spotted something the model can't: earphones, a second screen...
   const report = useCallback((device) => handleViolation({ device, score: 1 }), [handleViolation]);
 
   return { alert, cancel, removeNow, report, handleViolation };

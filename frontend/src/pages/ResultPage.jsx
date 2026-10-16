@@ -27,7 +27,7 @@ import { formatDateTime, formatTime } from "../lib/format";
 import { getStored, setStored } from "../lib/storage";
 import { t } from "../lib/i18n";
 
-// host-only: change the final decision or the notes after the interview
+// Host only: change the final decision or the notes after the interview
 function ResultEditor({ id, result }) {
   const updateResult = useUpdateResult();
   const [decision, setDecision] = useState(result.verdict);
@@ -100,7 +100,7 @@ function ResultPage() {
     autoDownloaded.current = true;
 
     const key = `report-downloaded:${id}`;
-    // without storage the PDF is simply downloaded again on every visit
+    // without storage we'd just download the PDF again on every visit, no big deal
     if (getStored(key)) return;
     setStored(key, "1");
 
@@ -202,7 +202,7 @@ function ResultPage() {
           </div>
         </header>
 
-        {/* VERDICT */}
+        {/* Verdict */}
         <section
           className={`animate-rise flex items-center gap-4 rounded-lg border p-6 ${
             accepted ? "border-success/50 bg-success/10" : "border-error/50 bg-error/10"
@@ -283,7 +283,7 @@ function ResultPage() {
           )
         )}
 
-        {/* QUIZ REVIEW */}
+        {/* Quiz review */}
         <section className="space-y-4">
           <h2 className="text-lg font-semibold">{t("result.review", "Quiz review")}</h2>
 
@@ -330,7 +330,7 @@ function ResultPage() {
           ))}
         </section>
 
-        {/* LAST CODE */}
+        {/* Last code submission */}
         {code.lastRun && (
           <section className="panel p-5">
             <div className="mb-3 flex items-center justify-between">

@@ -22,7 +22,7 @@ function Navbar() {
   const { pathname } = useLocation();
   const [paletteOpen, setPaletteOpen] = useState(false);
 
-  // Ctrl/Cmd + K toggles the command palette from anywhere
+  // Ctrl/Cmd + K opens the command palette from anywhere
   useEffect(() => {
     const onKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {

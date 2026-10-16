@@ -1,6 +1,6 @@
-// Default interview questions. Each host gets an editable copy of these (see
-// services/questionBank.js). The answer key lives on the server only: candidates never
-// receive it until the interview is completed.
+// Default interview questions. Every host starts with their own editable copy (see
+// services/questionBank.js). The answer key only lives on the server: candidates don't
+// get it until the interview is over.
 
 export const PASS_PERCENT = 60;
 
@@ -190,7 +190,7 @@ export const DEFAULT_QUESTIONS = [
   ),
 ];
 
-// questions of sessions created before quizzes were snapshotted
+// questions for sessions created before we started snapshotting quizzes
 export const defaultQuizFor = (problem) =>
   DEFAULT_QUESTIONS.filter((q) => q.problem === GENERAL_PROBLEM || q.problem === problem).map(
     ({ id, question, options, answer, explanation }) => ({ id, question, options, answer, explanation })

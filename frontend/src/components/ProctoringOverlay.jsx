@@ -2,15 +2,15 @@ import { useEffect, useRef } from "react";
 import { createDetector } from "../lib/deviceDetector";
 import { deviceLabel } from "../lib/devices";
 
-const FRAME_WIDTH = 480; // frames are downscaled before detection: 4x cheaper than full HD
-const DETECT_INTERVAL_MS = 350; // ~3 detections per second is plenty for a sustained-presence rule
+const FRAME_WIDTH = 480; // we shrink frames before detection, it's about 4x cheaper than full HD
+const DETECT_INTERVAL_MS = 350; // roughly 3 checks a second is plenty for a "device stays in view" rule
 const VIOLATION_WINDOW_MS = 4000;
-const VIOLATION_HITS = 5; // positive frames of the same device inside the window
-const SMOOTHING = 0.4; // how fast a box chases the latest detection (per animation frame)
-const MAX_AGE_MS = 800; // a box fades out when its device has not been seen for this long
-const MATCH_DISTANCE = 0.3; // fraction of the frame width within which a detection continues a box
+const VIOLATION_HITS = 5; // how many positive frames of the same device we need inside that window
+const SMOOTHING = 0.4; // how fast a box chases the newest detection (per animation frame)
+const MAX_AGE_MS = 800; // a box fades away if its device hasn't been seen for this long
+const MATCH_DISTANCE = 0.3; // share of the frame width within which a new detection counts as the same box
 
-/** maps video pixels to the rendered area of the <video>, honouring object-fit */
+/** Turns video pixels into on-screen pixels for the <video>, respecting object-fit */
 function renderedArea(element, videoWidth, videoHeight) {
   const box = element.getBoundingClientRect();
   const scale =
@@ -26,9 +26,9 @@ function renderedArea(element, videoWidth, videoHeight) {
 }
 
 /**
- * Watches the candidate's camera and draws red boxes that follow prohibited devices.
- * It owns the whole detection loop: nothing here is React state, so a detection (several per
- * second) never re-renders the call UI. Only `onStatus` (rare) and `onViolation` reach the parent.
+ * Watches the candidate's camera and draws red boxes that follow any prohibited device.
+ * The whole detection loop lives in here and none of it is React state, so the several detections
+ * a second never re-render the call UI. Only `onStatus` (rare) and `onViolation` reach the parent.
  *
  * @param {object} props
  * @param {MediaStream} props.stream  the candidate's camera
@@ -62,13 +62,13 @@ function ProctoringOverlay({ stream, containerRef, onStatus, onViolation }) {
     const frameContext = frameCanvas.getContext("2d", { willReadFrequently: true });
 
     const tracks = [];
-    const hits = []; // { at, label, score }
+    const hits = []; // recent positive frames: { at, label, score }
     let videoSize = { width: 0, height: 0 };
     let detectTimer;
     let drawing = 0;
     let disposed = false;
 
-    // ---------- drawing: runs only while there is something to show ----------
+    // ---------- drawing: only runs while there's something to show ----------
     const draw = () => {
       drawing = 0;
       const bounds = container.getBoundingClientRect();
@@ -110,7 +110,7 @@ function ProctoringOverlay({ stream, containerRef, onStatus, onViolation }) {
           context.strokeStyle = "#ef4444";
           context.strokeRect(x, y, w, h);
 
-          // the device name sits inside the rectangle, top-left
+          // the device name goes inside the rectangle, top-left
           const text = `${deviceLabel(track.label)} ${Math.round(track.score * 100)}%`;
           context.font = "700 14px ui-sans-serif, system-ui, sans-serif";
           const labelWidth = Math.min(context.measureText(text).width + 16, Math.max(w - 3, 0));
@@ -133,7 +133,7 @@ function ProctoringOverlay({ stream, containerRef, onStatus, onViolation }) {
       if (!drawing && !disposed) drawing = requestAnimationFrame(draw);
     };
 
-    // ---------- tracking: continue the box of the same device or start a new one ----------
+    // ---------- tracking: keep the box of the same device, or start a new one ----------
     const track = (detection) => {
       const [x, y, w, h] = detection.bbox;
       const cx = x + w / 2;
@@ -167,7 +167,7 @@ function ProctoringOverlay({ stream, containerRef, onStatus, onViolation }) {
       }
     };
 
-    // ---------- detection loop ----------
+    // ---------- the detection loop ----------
     const tick = async () => {
       if (disposed) return;
 
@@ -185,7 +185,7 @@ function ProctoringOverlay({ stream, containerRef, onStatus, onViolation }) {
           const detections = await detector.detect(frame);
           if (disposed) return;
 
-          // boxes come back in the downscaled frame; bring them to video pixels
+          // boxes come back in the shrunken frame, so scale them back up to video pixels
           const now = Date.now();
           detections.forEach((d) => {
             const full = { ...d, bbox: d.bbox.map((n) => n * scale) };
@@ -195,7 +195,7 @@ function ProctoringOverlay({ stream, containerRef, onStatus, onViolation }) {
 
           while (hits.length && now - hits[0].at > VIOLATION_WINDOW_MS) hits.shift();
 
-          // the same device in enough frames of the last seconds: a real violation, not a glitch
+          // the same device in enough frames over the last few seconds means it's real, not a glitch
           for (const label of new Set(hits.map((h) => h.label))) {
             const same = hits.filter((h) => h.label === label);
 

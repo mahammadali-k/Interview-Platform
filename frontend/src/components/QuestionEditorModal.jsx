@@ -10,7 +10,7 @@ const MAX_OPTIONS = 6;
 const EMPTY = { question: "", options: ["", ""], answer: 0, explanation: "", problem: "*" };
 
 /**
- * Create or edit a quiz question.
+ * Add or edit a quiz question.
  * @param {object} props
  * @param {object | null} props.initial  existing question to edit, or null to create
  * @param {{value: string, label: string}[]} [props.problemOptions]  shows a "Problem" select
@@ -42,7 +42,7 @@ function QuestionEditorModal({
     setForm((prev) => ({
       ...prev,
       options: prev.options.filter((_, i) => i !== idx),
-      // keep the "correct" marker on the same option
+      // keep the "correct" marker on the same option after one gets removed
       answer: prev.answer === idx ? 0 : prev.answer > idx ? prev.answer - 1 : prev.answer,
     }));
   };

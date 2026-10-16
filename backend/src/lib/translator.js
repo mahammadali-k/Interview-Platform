@@ -1,6 +1,6 @@
 import { ENV } from "./env.js";
 
-// Text translation for live call captions. The provider is chosen with TRANSLATE_PROVIDER.
+// Translates text for the live call captions. TRANSLATE_PROVIDER picks the service.
 
 export const TRANSLATE_LANGUAGES = ["en", "az", "ru"];
 
@@ -30,7 +30,7 @@ async function withMyMemory(text, from, to) {
 async function withDeepL(text, from, to) {
   if (!ENV.DEEPL_API_KEY) throw new Error("DEEPL_API_KEY is not set");
 
-  // free keys end with ":fx" and use a different host
+  // free DeepL keys end with ":fx" and talk to a different host
   const host = ENV.DEEPL_API_KEY.endsWith(":fx") ? "api-free.deepl.com" : "api.deepl.com";
   const data = await fetchJson(`https://${host}/v2/translate`, {
     method: "POST",
@@ -68,7 +68,7 @@ export async function translate(text, from, to) {
   const provider = PROVIDERS[ENV.TRANSLATE_PROVIDER] || withMyMemory;
   const translated = (await provider(text, from, to)).trim();
 
-  // a tiny FIFO cache: captions repeat short phrases ("yes", "thank you") a lot
+  // a tiny FIFO cache: captions repeat short phrases ("yes", "thank you") all the time
   if (cache.size >= CACHE_LIMIT) cache.delete(cache.keys().next().value);
   cache.set(key, translated);
 

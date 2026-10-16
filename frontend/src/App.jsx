@@ -6,13 +6,14 @@ import Spinner from "./components/Spinner";
 import { useLang } from "./lib/i18n";
 
 import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/DashboardPage";
-import ProblemsPage from "./pages/ProblemsPage";
-import HomeHubPage from "./pages/HomeHubPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 
-// heavy pages (Monaco editor, video SDK) are loaded on demand
+// Only the landing page ships in the first bundle. Every other page loads when someone opens it,
+// so a first visit stays snappy (and the heavy Monaco / video bits stay out of the way).
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const ProblemsPage = lazy(() => import("./pages/ProblemsPage"));
+const HomeHubPage = lazy(() => import("./pages/HomeHubPage"));
 const ProblemPage = lazy(() => import("./pages/ProblemPage"));
 const SessionPage = lazy(() => import("./pages/SessionPage"));
 const ResultPage = lazy(() => import("./pages/ResultPage"));
@@ -22,14 +23,14 @@ const QuestionsPage = lazy(() => import("./pages/QuestionsPage"));
 const PageLoader = () => <Spinner fullScreen />;
 
 function App() {
-  useLang(); // re-render everything below when the language changes
+  useLang(); // subscribing here re-renders the whole tree when the language changes
   const { isSignedIn, isLoaded } = useUser();
   const { pathname, search } = useLocation();
 
-  // this will get rid of the flickering effect
+  // wait until Clerk knows who is signed in, otherwise the wrong screen flashes for a moment
   if (!isLoaded) return null;
 
-  // remember where the visitor was heading (e.g. an invite link) so sign-in can return there
+  // remember where the visitor was heading (an invite link, say) so we can send them back after sign-in
   const protect = (element) =>
     isSignedIn ? element : <Navigate to={`/?redirect=${encodeURIComponent(pathname)}`} replace />;
 

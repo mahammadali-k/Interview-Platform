@@ -10,7 +10,7 @@ function Section({ title, children }) {
   );
 }
 
-// description / examples / constraints block shared by the practice and session pages
+// Description, examples and constraints, shared by the practice page and the live session
 function ProblemDetails({ problem }) {
   if (!problem) return null;
 

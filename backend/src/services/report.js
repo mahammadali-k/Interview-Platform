@@ -20,7 +20,7 @@ export function durationSeconds(session) {
 
 const person = (user) => (user ? { name: user.name, email: user.email } : null);
 
-/** compact numbers used by the history table */
+/** The compact numbers the history table needs */
 export function summarize(session) {
   const quiz = gradeQuiz(quizOf(session), session.quizAnswers);
   const runs = session.codeRuns;
@@ -55,7 +55,7 @@ export function summarize(session) {
   };
 }
 
-/** the full feedback report (page, PDF and email all use this) */
+/** The full feedback report (the page, the PDF and the email all use it) */
 export function buildReport(session, role) {
   const quiz = gradeQuiz(quizOf(session), session.quizAnswers);
   const summary = summarize(session);
@@ -76,7 +76,7 @@ export function buildReport(session, role) {
     },
     result: session.result,
     email: session.email,
-    // only the host sees integrity incidents (the controller strips them for the candidate)
+    // integrity incidents are for the host's eyes only
     incidents: role === "host" ? session.incidents : [],
     quiz: {
       submitted: summary.quiz.submitted,

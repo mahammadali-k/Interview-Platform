@@ -7,7 +7,7 @@ import { PROBLEM_LIST } from "../data/problems";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-// the same problem for everyone all day, a new one at midnight (UTC)
+// Everyone gets the same problem all day and a new one at midnight (UTC). No backend needed
 const problemOfTheDay = () => PROBLEM_LIST[Math.floor(Date.now() / DAY_MS) % PROBLEM_LIST.length];
 
 function DailyChallenge() {

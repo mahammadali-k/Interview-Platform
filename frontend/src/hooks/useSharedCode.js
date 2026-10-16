@@ -3,15 +3,15 @@ import { useCallback, useEffect, useRef } from "react";
 const SEND_DELAY_MS = 250;
 
 /**
- * Keeps the code editor and selected language in sync between the interviewer and the
- * candidate using custom events on the session's Stream chat channel (no extra backend).
+ * Keeps the code editor and the selected language in sync between interviewer and candidate, using
+ * custom events on the session's Stream chat channel (so no extra backend needed).
  *
- * - local edits are sent explicitly through `broadcast` (debounced) as `code.update`
- * - a joining client sends `code.request`; the peer answers with its current code
+ * - local edits go out through `broadcast` (debounced) as `code.update`
+ * - someone joining sends `code.request` and the peer answers with its current code
  * - last write wins, which is fine for a 1-on-1 interview
  *
- * Nothing is broadcast on load or when a remote change is applied, so a late joiner can
- * never overwrite the code that is already in the room.
+ * Nothing is broadcast on load or when a remote change comes in, so a late joiner can't overwrite
+ * the code that's already in the room.
  */
 function useSharedCode({ channel, userId, code, language, onRemoteChange }) {
   const current = useRef({ code, language });
@@ -36,7 +36,7 @@ function useSharedCode({ channel, userId, code, language, onRemoteChange }) {
       }
     });
 
-    // ask whoever is already in the room for the current code
+    // ask whoever's already in the room for their current code
     channel.sendEvent({ type: "code.request" }).catch(() => {});
 
     return () => {

@@ -48,7 +48,7 @@ const greeting = () => {
       : t("greet.evening", "Good evening");
 };
 
-// the signed-in landing page: greeting, live numbers, a daily problem and an activity calendar
+// The signed-in home page: a greeting, live numbers, a problem of the day and an activity calendar
 function HomeHubPage() {
   const { user } = useUser();
   const { data: history } = useHistory();
@@ -62,7 +62,7 @@ function HomeHubPage() {
     <div className="min-h-screen animate-fade bg-base-200">
       <Navbar />
 
-      {/* HERO */}
+      {/* Hero */}
       <header className="relative isolate overflow-hidden border-b hairline bg-base-100">
         <AuroraBackground />
 
@@ -109,7 +109,7 @@ function HomeHubPage() {
       </header>
 
       <main className="mx-auto max-w-7xl space-y-6 px-6 py-10">
-        {/* LIVE NUMBERS */}
+        {/* Live numbers */}
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <StatTile label={t("hub.stat.live", "Live now")} value={active?.sessions.length ?? 0} icon={RadioIcon} live />
           <StatTile label={t("hub.stat.interviews", "Interviews")} value={interviews.length} icon={UsersIcon} />
@@ -127,7 +127,7 @@ function HomeHubPage() {
           <StatTile label={t("hub.stat.time", "Time interviewing")} value={formatDuration(totalSeconds)} icon={ClockIcon} />
         </div>
 
-        {/* DAILY CHALLENGE + ACTIVITY */}
+        {/* Problem of the day + activity calendar */}
         <div className="grid gap-6 lg:grid-cols-3">
           <DailyChallenge />
 
@@ -139,7 +139,7 @@ function HomeHubPage() {
 
         <TipCarousel />
 
-        {/* SHORTCUTS */}
+        {/* Shortcuts */}
         <section>
           <p className="eyebrow mb-4">{t("hub.jump", "Jump to")}</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

@@ -16,7 +16,7 @@ import { PROBLEM_LIST } from "../data/problems";
 import { setTheme, useTheme } from "../lib/theme";
 import { getLang, t } from "../lib/i18n";
 
-// Ctrl/Cmd + K: jump anywhere without touching the mouse
+// Ctrl/Cmd + K: jump anywhere without reaching for the mouse
 function CommandPalette({ open, onClose }) {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -24,7 +24,7 @@ function CommandPalette({ open, onClose }) {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
 
-  // `t` reads the current language, which is why the language is a dependency here
+  // t() reads the current language, which is why the language is a dependency here (otherwise the list keeps the old words)
   const lang = getLang();
   const commands = useMemo(
     () => [

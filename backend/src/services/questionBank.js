@@ -19,7 +19,7 @@ export async function ensureDefaults(ownerId) {
   );
 }
 
-export const toSnapshot = (doc) => ({
+const toSnapshot = (doc) => ({
   id: doc._id.toString(),
   question: doc.question,
   options: doc.options,
@@ -27,7 +27,7 @@ export const toSnapshot = (doc) => ({
   explanation: doc.explanation || "",
 });
 
-// questions for a new interview: general ones first, then the ones of the chosen problem
+// questions for a new interview: the general ones first, then the ones for the chosen problem
 export async function snapshotQuiz(ownerId, problem) {
   await ensureDefaults(ownerId);
 

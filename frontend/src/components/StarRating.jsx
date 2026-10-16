@@ -1,7 +1,7 @@
 import { StarIcon } from "lucide-react";
 import { t } from "../lib/i18n";
 
-// 1-5 stars; clicking the selected star again clears the rating
+// 1-5 stars. Click the selected star again to clear the rating
 function StarRating({ value, onChange, readOnly = false, size = "size-6" }) {
   return (
     <div className="flex items-center gap-1" role="radiogroup" aria-label={t("rating.label", "Rating")}>

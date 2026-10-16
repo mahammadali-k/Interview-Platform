@@ -16,7 +16,7 @@ export async function getQuiz(req, res) {
     const { session, role } = await loadSession(req, res);
     if (!session) return;
 
-    // host (interviewer) sees the answer key; the candidate only after the interview is over
+    // the host (interviewer) gets the answer key; the candidate only sees it once the interview is over
     const revealAnswers = role === "host" || session.status === "completed";
     const selectedById = new Map(session.quizAnswers.map((a) => [a.questionId, a.selected]));
 
@@ -33,7 +33,7 @@ export async function getQuiz(req, res) {
 }
 
 // POST /sessions/:id/quiz   body: { answers: { [questionId]: optionIndex } }
-// Partial submissions are fine: unanswered questions simply count as unanswered.
+// Partial submissions are fine: whatever isn't answered just counts as unanswered.
 export async function submitQuiz(req, res) {
   try {
     const { session } = await loadSession(req, res, {
@@ -62,7 +62,7 @@ export async function submitQuiz(req, res) {
   }
 }
 
-// ---- host edits the questions of a running interview ----
+// ---- the host edits the questions of a running interview ----
 
 async function loadHostSession(req, res) {
   const { session } = await loadSession(req, res, {
@@ -72,7 +72,7 @@ async function loadHostSession(req, res) {
   });
   if (!session) return {};
 
-  // sessions created before snapshots existed get their questions materialized first
+  // sessions from before we started snapshotting get their questions copied in first
   if (!session.quiz.length) session.quiz = quizOf(session);
 
   return { session };

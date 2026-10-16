@@ -1,7 +1,7 @@
 import axiosInstance from "./axios";
 
 /**
- * Code runs in a sandbox on the server, which also judges the output.
+ * Code runs in a sandbox on the server, and the server judges the output too.
  * @param {string} language
  * @param {string} code
  * @param {{ problem?: string, sessionId?: string }} context

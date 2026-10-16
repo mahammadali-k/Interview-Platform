@@ -39,7 +39,7 @@ import ElapsedTimer from "../components/ElapsedTimer";
 import CopyInviteButton from "../components/CopyInviteButton";
 import { t } from "../lib/i18n";
 
-// the video SDK and chat are the heaviest part of the page: load them after the first paint
+// The video SDK and chat are the heaviest part of this page, so load them after the first paint
 const VideoCallUI = lazy(() => import("../components/VideoCallUI"));
 
 function CenteredMessage({ children }) {
@@ -80,7 +80,7 @@ function SessionPage() {
     isParticipant
   );
 
-  // find the problem data based on session problem title
+  // find the problem details from the problem title stored on the session
   const problemData = session?.problem ? PROBLEM_LIST.find((p) => p.title === session.problem) : null;
 
   const {
@@ -93,7 +93,7 @@ function SessionPage() {
   } = useStarterCode(problemData);
   const { output, isRunning, run, reset } = useCodeRunner();
 
-  // auto-join session if user is not already a participant and not the host
+  // if you're neither the host nor the candidate yet, join automatically
   useEffect(() => {
     if (!session || !user || loadingSession) return;
     if (isHost || isParticipant) return;
@@ -102,7 +102,7 @@ function SessionPage() {
     joinSession(id, { onSuccess: refetch });
   }, [session, user, loadingSession, isHost, isParticipant, id, isJoining, joinFailed, joinSession, refetch]);
 
-  // everybody lands on the feedback page when the interview ends
+  // when the interview ends, everyone lands on the feedback page
   useEffect(() => {
     if (!session || loadingSession) return;
 
@@ -111,7 +111,7 @@ function SessionPage() {
     }
   }, [session, loadingSession, isMember, navigate, id]);
 
-  // interviewer and candidate edit the same code; language switches are shared too
+  // interviewer and candidate edit the same code, and switching language is shared too
   const { broadcast } = useSharedCode({
     channel,
     userId: user?.id,
@@ -158,12 +158,12 @@ function SessionPage() {
       { onSuccess: () => toast.success(t("quiz.submitted", "Answers submitted!")) }
     );
 
-  // candidate: send whatever is answered, then end the interview
+  // candidate: send whatever's answered, then end the interview
   const handleFinish = async () => {
     try {
       if (!quizSubmitted) await submitQuizMutation.mutateAsync({ id, answers: draft });
     } catch (error) {
-      // already submitted elsewhere is fine; anything else stops here
+      // "already submitted somewhere else" is fine; anything else stops here
       if (error.response?.status !== 409) return;
     }
 
@@ -175,7 +175,7 @@ function SessionPage() {
     );
   };
 
-  // ---- host edits the interview's questions ----
+  // ---- the host edits the interview's questions ----
 
   const handleSaveQuestion = (values) => {
     const done = { onSuccess: () => setEditingQuestion(undefined) };
@@ -193,7 +193,7 @@ function SessionPage() {
     }
   };
 
-  // removed by the host (or the session is not joinable)
+  // removed by the host (or the session can't be joined)
   if (joinFailed && !isMember) {
     return (
       <div className="flex h-screen flex-col bg-base-200">
@@ -220,7 +220,7 @@ function SessionPage() {
 
       <div className="flex-1">
         <PanelGroup direction="horizontal">
-          {/* LEFT PANEL - PROBLEM DETAILS, CODE EDITOR & OUTPUT */}
+          {/* Left side: problem details, code editor and output */}
           <Panel defaultSize={50} minSize={30}>
             <PanelGroup direction="vertical">
               <Panel defaultSize={50} minSize={20}>
@@ -349,7 +349,7 @@ function SessionPage() {
 
           <ResizeHandle direction="horizontal" />
 
-          {/* RIGHT PANEL - VIDEO CALLS & CHAT */}
+          {/* Right side: video call and chat */}
           <Panel defaultSize={50} minSize={30}>
             <div className="h-full overflow-auto bg-base-200 p-4">
               {isInitializingCall ? (

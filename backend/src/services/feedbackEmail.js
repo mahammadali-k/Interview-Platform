@@ -4,8 +4,8 @@ import { buildReportPdf, formatDuration, reportFileName } from "../lib/reportPdf
 import { isMailConfigured, sendMail } from "../lib/mailer.js";
 
 /**
- * Emails the feedback PDF to the candidate (host in copy) and stores the delivery status.
- * Never throws: the interview result must not depend on the mail provider.
+ * Emails the feedback PDF to the candidate (host in copy) and stores how it went.
+ * Never throws: the interview result shouldn't depend on the mail provider.
  * @returns {Promise<{sent: boolean, to?: string, error?: string}>}
  */
 export async function sendFeedbackEmail(sessionId) {

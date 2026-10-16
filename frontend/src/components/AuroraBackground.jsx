@@ -1,4 +1,4 @@
-// soft animated colour blobs behind the hero: only transforms animate (cheap on the GPU)
+// Soft blurry colour blobs behind the hero. Only transforms animate, so it stays cheap on the GPU
 function AuroraBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">

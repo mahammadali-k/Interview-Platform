@@ -1,12 +1,12 @@
-# Fly.io configuration. Keep this file in the repository root: "Config path" = fly.toml (the default).
+# Fly.io config. Keep this file in the repo root: "Config path" = fly.toml (the default).
 # Change `app` to a name that is free on Fly (it becomes https://<app>.fly.dev).
 app = "interview-platform"
-primary_region = "ams" # Amsterdam (the region of the app that was already created)
+primary_region = "ams" # Amsterdam, the same region as the app that already exists
 
 [build]
   dockerfile = "Dockerfile"
 
-  # public values baked into the frontend at build time
+  # public values that get baked into the frontend at build time
   [build.args]
     VITE_API_URL = "/api"
     VITE_CLERK_PUBLISHABLE_KEY = "pk_test_b3JnYW5pYy1kdWNrLTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
@@ -15,7 +15,7 @@ primary_region = "ams" # Amsterdam (the region of the app that was already creat
 [env]
   NODE_ENV = "production"
   PORT = "3000"
-  # must equal the public URL of the app
+  # has to match the public URL of the app
   CLIENT_URL = "https://interview-platform.fly.dev"
   CLERK_PUBLISHABLE_KEY = "pk_test_b3JnYW5pYy1kdWNrLTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
   STREAM_API_KEY = "k8cx57rbuhpc"

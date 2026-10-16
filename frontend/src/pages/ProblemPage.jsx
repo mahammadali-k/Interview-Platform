@@ -34,7 +34,7 @@ function ProblemPage() {
     useStarterCode(currentProblem);
   const { output, isRunning, run, reset } = useCodeRunner();
 
-  // a different problem starts with a clean output
+  // a different problem should start with a clean output
   useEffect(() => reset(), [problemId, reset]);
 
   const handleRunCode = async () => {

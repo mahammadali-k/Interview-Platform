@@ -1,7 +1,7 @@
 import { jsPDF } from "jspdf";
 
-// Builds the interview feedback PDF on the server so the page download and the email
-// attachment are exactly the same document.
+// Builds the feedback PDF on the server, so the download on the page and the email attachment
+// are exactly the same document.
 
 const PAGE = { width: 210, height: 297, margin: 18 };
 const CONTENT_WIDTH = PAGE.width - PAGE.margin * 2;
@@ -17,7 +17,7 @@ const COLORS = {
 
 const LETTERS = ["A", "B", "C", "D", "E", "F"];
 
-// jsPDF's built-in fonts are Latin-1 only, so transliterate anything outside it
+// jsPDF's built-in fonts only cover Latin-1, so anything outside it gets transliterated
 const safe = (value) =>
   String(value ?? "")
     .replace(/ə/g, "e")
@@ -107,7 +107,7 @@ export function buildReportPdf(report) {
   doc.text("Interview Platform - feedback report", PAGE.margin, 22);
   y = 40;
 
-  // meta
+  // who / what / when
   [
     ["Candidate", session.candidate ? `${session.candidate.name} (${session.candidate.email})` : "-"],
     ["Interviewer", session.host ? `${session.host.name} (${session.host.email})` : "-"],

@@ -7,16 +7,16 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// Import your Publishable Key
+// Clerk's publishable key. It's safe to expose, it ends up in the browser anyway
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Clerk Publishable Key");
 }
 
-// data rarely changes between page views, so avoid refetching on every mount and tab focus;
-// the live queries (sessions, quiz) opt in to polling themselves
-// feeds the cursor spotlight of `.lift` cards (one delegated listener, coalesced per frame)
+// Data doesn't change much between page views, so skip refetching on every mount and tab focus.
+// The live queries (sessions, quiz) switch polling on for themselves.
+// Feeds the cursor spotlight on `.lift` cards: one delegated listener, throttled to once per frame
 let spotlightFrame = 0;
 document.addEventListener(
   "pointermove",
@@ -40,7 +40,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// the dictionary of a non-English language is a separate chunk: have it ready before the first paint
+// Non-English dictionaries are separate chunks, so load the right one before the first paint
 initLang().then(() => {
   createRoot(document.getElementById("root")).render(
     <StrictMode>

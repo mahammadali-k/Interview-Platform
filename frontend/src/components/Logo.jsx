@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-// "IP" monogram with a text caret: a nod to code editing. The caret blinks via CSS (opacity only).
+// The "IP" monogram with a text caret, a small nod to code editors. The caret blinks with plain CSS
 function LogoMark({ className = "size-9" }) {
   return (
     <svg viewBox="0 0 32 32" className={className} aria-hidden="true">

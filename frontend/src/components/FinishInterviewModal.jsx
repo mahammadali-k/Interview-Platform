@@ -2,7 +2,7 @@ import { Loader2Icon } from "lucide-react";
 import Modal from "./Modal";
 import { t } from "../lib/i18n";
 
-// candidate-side: submit what has been answered so far and leave. Skipped questions are fine.
+// Candidate side: send what you've answered so far and leave. Skipping questions is totally fine
 function FinishInterviewModal({ answered, total, alreadySubmitted, isFinishing, onConfirm, onClose }) {
   const unanswered = total - answered;
 

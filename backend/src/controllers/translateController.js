@@ -36,7 +36,7 @@ export async function translateText(req, res) {
 
     res.status(200).json({ text: await translate(text.trim(), from, to) });
   } catch (error) {
-    // the call keeps working without captions, so this is a soft failure
+    // the call works fine without captions, so this is a soft failure
     console.log("Translation failed:", error.message);
     serverError(res, "translateText", error);
   }

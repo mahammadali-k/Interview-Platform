@@ -1,23 +1,23 @@
-// Prohibited-device detection. The model runs in a Web Worker (see workers/detector.worker.js),
-// entirely inside the browser: no video leaves the machine and nothing is recorded.
+// Detects prohibited devices. The model runs in a Web Worker (see workers/detector.worker.js) and
+// entirely in the browser: no video leaves the machine and nothing is recorded.
 
-// COCO label -> minimum confidence. Everything else is ignored: remotes, books and monitors are
-// misread as phones all the time, and keyboards/monitors are normal in any workspace.
-export const PROHIBITED = {
+// COCO label -> minimum confidence. Everything else is ignored: remotes, books and monitors get
+// mistaken for phones all the time, and keyboards and monitors are normal in any workspace.
+const PROHIBITED = {
   "cell phone": 0.6,
   laptop: 0.7,
 };
 
 const MODEL_MIN_SCORE = 0.4;
 
-// a real phone/laptop in a webcam frame has a plausible size and shape
-const MIN_AREA = 0.004; // of the frame
+// a real phone or laptop in a webcam frame has a believable size and shape
+const MIN_AREA = 0.004; // share of the frame
 const MAX_AREA = 0.32;
 const MIN_ASPECT = 0.3; // width / height
 const MAX_ASPECT = 3.3;
 
-/** keeps only detections that look like a real prohibited device */
-export function filterDetections(predictions, frameWidth, frameHeight) {
+/** Keeps only the detections that look like a real prohibited device */
+function filterDetections(predictions, frameWidth, frameHeight) {
   const frameArea = frameWidth * frameHeight;
 
   return predictions
@@ -51,7 +51,7 @@ export function createDetector() {
     resolveReady = resolve;
     rejectReady = reject;
   });
-  ready.catch(() => {}); // an unobserved failure must not surface as an unhandled rejection
+  ready.catch(() => {}); // nobody awaits this promise directly, so swallow the rejection here to avoid an "unhandled rejection" warning
 
   worker.onmessage = ({ data }) => {
     if (data.type === "ready") {

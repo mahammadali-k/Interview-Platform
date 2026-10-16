@@ -36,14 +36,14 @@ function VideoCallUI({ chatClient, channel, sessionId, isHost = false, proctorin
   const remoteParticipants = useRemoteParticipants();
   const videoAreaRef = useRef(null);
 
-  // device detection: the host's browser watches the candidate's camera
+  // Device detection: the host's browser keeps an eye on the candidate's camera
   const candidateStream = isHost ? remoteParticipants.find((p) => p.videoStream)?.videoStream : undefined;
   const proctor = useProctoring({ channel, userId: user?.id, isHost, sessionId });
   const [detectionStatus, setDetectionStatus] = useState("idle");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const theme = useTheme();
 
-  // live translation: remembered per browser; the spoken language defaults to the page language
+  // Live translation: remembered per browser, and the language you speak defaults to the page language
   const [captionsOn, setCaptionsOn] = useState(() => getStored("captions") !== "off");
   const [spokenLang, setSpokenLang] = useState(() => getStored("spokenLang") || getLang());
 
@@ -153,7 +153,7 @@ function VideoCallUI({ chatClient, channel, sessionId, isHost = false, proctorin
         <div ref={videoAreaRef} className="relative flex-1 overflow-hidden rounded-lg border hairline bg-base-300">
           <SpeakerLayout />
 
-          {/* stays mounted during the countdown so the red box keeps following the device */}
+          {/* Stays mounted during the countdown so the red box keeps following the device */}
           {isHost && proctoring && candidateStream && (
             <ProctoringOverlay
               stream={candidateStream}
@@ -226,5 +226,5 @@ function VideoCallUI({ chatClient, channel, sessionId, isHost = false, proctorin
   );
 }
 
-// memoised: typing in the editor or the notes re-renders the session page, but never the call UI
+// Memoised on purpose: typing in the editor or the notes re-renders the session page, but the call UI shouldn't care
 export default memo(VideoCallUI);

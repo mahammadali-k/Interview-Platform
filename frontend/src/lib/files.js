@@ -1,4 +1,4 @@
-/** starts a browser download for a Blob */
+/** Starts a browser download for a Blob */
 export function saveBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
 
